@@ -3,74 +3,118 @@ from django.db import models
 # Create your models here.
 
 
-class Racer(models.Model):
-    name = models.CharField(max_length=24, required=True)
-    surname = models.CharField(max_length=24, required=True)
-    nick = models.CharField(max_length=24)
-    mail = models.CharField(max_length=24)
-    phone_tel = models.CharField(max_length=24)
-    desc = models.CharField(max_length=200)
-    race_licence = models.BooleanField(required=True)
+class Person(models.Model):
+    name = models.CharField(max_length=24)
+    surname = models.CharField(max_length=24)
+    nick = models.CharField(max_length=24, blank=True)
+    mail = models.CharField(max_length=24, blank=True)
+    phone_tel = models.CharField(max_length=24, blank=True)
+    desc = models.CharField(max_length=200, blank=True)
+    race_licence = models.BooleanField()
 
-
+    def __str__(self):
+        return "{} {} ({})".format(self.name, self.surname, self.nick)
 
 
 class Race(models.Model):
-    name = models.CharField(max_length=24, required=True)
-    place = models.CharField(max_length=24, required=True)
-    date = models.DateTimeField()
+    name = models.CharField(max_length=256)
+    place = models.CharField(max_length=256)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    finished = models.BooleanField(default=False)   # True id Race is finished
+    current_loop = models.DecimalField(default=0, decimal_places=0, max_digits=9)
+    race_type_choices = (
+        ('TimeAttack', 'TimeAttack'),
+        ('ShorthestSum', 'ShorthestSum')
+        )
 
-    # for example: 1 - time attack, 2 - KJS style
-    race_type = models.DecimalField(decimal_places=0, max_digits=9, required=True)
-    loop_count = models.DecimalField(decimal_places=0, max_digits=9, required=True)     # how many loops are on race
+    race_type = models.CharField(
+        choices=race_type_choices,
+        default='TimeAttack',
+        max_length=24
+    )
+    loop_count = models.DecimalField(decimal_places=0, max_digits=9)     # how many loops are on race
+
+    def __str__(self):
+        return self.name
 
 
 class CarClass(models.Model):
-    name = models.CharField(max_length=24, required=True)
-    cap_measurement = models.BooleanField(required=True)    # true if this class is engine's capacity based
-    awd_measurement = models.BooleanField(required=True)  # true if this class is awd(all wheel drive) based
-    guest = models.BooleanField(required=True)  # true if this class is only for race licence racers
-    cap_min = models.DecimalField(decimal_places=0, max_digits=9)       # used if cap_measurment=True, unit: ccm
-    cap_max = models.DecimalField(decimal_places=0, max_digits=9)       # used if cap_measurment=True, unit: ccm
+    name = models.CharField(max_length=24)
+    type_choices = (
+        ('Capacity','Capacity'),
+        ('AWD', 'AWD'),
+        ('Guest', 'Guest')
+    )
+    type = models.CharField(
+        choices=type_choices,
+        max_length=24
+    )
+    cap_min = models.DecimalField(decimal_places=0, max_digits=9)       # used if type='Capacity', unit: ccm
+    cap_max = models.DecimalField(decimal_places=0, max_digits=9)       # used if type='Capacity', unit: ccm
+
+    def __str__(self):
+        return self.name
 
 
 class Car(models.Model):
-    manufacurer = models.CharField(max_length=24, required=True)
-    model = models.CharField(max_length=24, required=True)
-    desc = models.CharField(max_length=24, required=True)
+    manufacurer = models.CharField(max_length=24, )
+    model = models.CharField(max_length=24, )
+    desc = models.CharField(max_length=24, )
+    engine_model = models.CharField(max_length=24, blank=True)
+    fuel_choices = (
+        ("gasoline", "gasoline"),
+        ("diesel", "diesel"),
+        ("electricity", "electricity")
+    )
+    fuel = models.CharField(choices=fuel_choices, max_length=24)
+    accel_type_choices = (
+        ("Turbocharged","Turbocharged"),
+        ("Supercharged","Supercharged"),
+        ("Electrical","Electrical")
+    )
+    accel_type = models.CharField(
+        choices=accel_type_choices,
+        blank=True,
+        max_length=24
+    )
 
-    # 1 - gasoline, 2 - diesel, 3 -  electrical, 4 - hybrid
-    fuel = models.DecimalField(decimal_places=0, max_digits=2)
-
-    # 1 - turbo, 2 - compressor, 3 - electrical, 4 - airpump
-    accel_type = models.DecimalField(decimal_places=0, max_digits=2)
-
-    power = models.DecimalField(decimal_places=0, max_digits=9)     # unit: Horse Power (KM)
-    torque = models.DecimalField(decimal_places=0, max_digits=9)     # unit: Nm
+    power = models.DecimalField(decimal_places=0, max_digits=9, blank=True)     # unit: Horse Power (KM)
+    torque = models.DecimalField(decimal_places=0, max_digits=9, blank=True)     # unit: Nm
     engine_capacity = models.DecimalField(decimal_places=0, max_digits=9)   #unit: ccm
-    wankel = models.BooleanField(required=True)
-    turbocharged = models.BooleanField(required=True)
-    supercharged = models.BooleanField(required=True)
-    hybrid = models.BooleanField(required=True)
+    wankel = models.BooleanField()
+    hybrid = models.BooleanField()
+
+    def __str__(self):
+        return "{} {} {}".format(self.manufacurer, self.model, round(self.engine_capacity/1000, 1))
 
 
-class Participant(models.Model):
-    race = models.ForeignKey(Race)
-    racer = models.ForeignKey(Racer)
-    car = models.ForeignKey(Car)
+class Team(models.Model):
+    start_no = models.DecimalField(decimal_places=0, max_digits=9)
+    driver = models.ForeignKey(Person, on_delete=models.CASCADE,related_name='+',)
+    navigator = models.ForeignKey(Person, on_delete=models.CASCADE, blank=True, related_name='+',)
+    race = models.ForeignKey(Race, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
 
-
-
-class Loop(models.Model):
-    no = models.DecimalField(decimal_places=0, max_digits=9)     # id of loop
-    finished = models.BooleanField(required=True)       # true if that loop was finsihed
+    def __str__(self):
+        team_name = "{}.{}, {}.{}".format(
+            self.driver.name[:1],
+            self.driver.surname,
+            self.navigator.name[:1],
+            self.navigator.surname
+            )
+        print(team_name)
+        return "{}: {}".format(self.start_no, team_name)
 
 
 class Lap(models.Model):
-    race = models.ForeignKey(Race)
-    participant = models.ForeignKey(Participant)
-    loop = models.ForeignKey(Loop)
-    taryfa = models.BooleanField(required=True) # true if "taryfa"
-    fee = models.DecimalField(decimal_places=0, max_digits=9)   # fee in seconds
-    start_time = models.TimeField()
-    stop_time = models.TimeField()
+    race = models.ForeignKey(Race, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
+    loop = models.DecimalField(decimal_places=0, max_digits=9)
+    taryfa = models.BooleanField()  # true if "taryfa"
+    fee = models.DecimalField(default=0, decimal_places=0, max_digits=9)   # fee in seconds
+    start_time = models.TimeField(blank=True, null=True)
+    stop_time = models.TimeField(blank=True, null=True)
+
+    def __str__(self):
+        return "{}, {}, Loop: {}".format(self.race, self.team, self.loop)
