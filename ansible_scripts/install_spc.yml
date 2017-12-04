@@ -1,0 +1,73 @@
+---
+- name: SystemPomiaruCzasu install playbook
+  hosts: SPC
+  remote_user: "{{run_user}}"
+  become: yes
+  become_method: sudo
+  vars:
+    SPC_dir: "/home/dymbol/SPC"
+    run_user: "dymbol"
+    run_group: "dymbol"
+
+  tasks:
+    #for ffmpeg
+    - name: install the rpmfusion repo packages
+      dnf: name={{ item }}
+        state=present
+      with_items:
+        - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
+        - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
+
+    - name: Install required packages
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - jbigkit-libs
+        - lcms2
+        - lcms2-devel
+        - libimagequant
+        - libjpeg-turbo
+        - libjpeg-turbo-devel
+        - libtiff
+        - libtiff-devel
+        - libwebp
+        - openjpeg2
+        - openjpeg2-devel
+        - python2-olefile
+        - zlib
+        - zlib-devel
+        - gcc
+        - redhat-rpm-config
+        - python2-devel
+        - ffmpeg
+        - git
+      when: ansible_distribution == "Centos" and ansible_distribution_major_version > '6'
+
+
+    - name: Disabling SELINUX
+      selinux:
+        state: disabled
+
+    - name: disable firewalld
+      systemd:
+        name: firewalld
+        enabled: no
+        state: stopped
+
+    - name: Creates SPC directory
+      file: path="{{ SPC_dir }}" state=directory
+
+    - name: Get source code from github
+      git:
+        repo: 'https://github.com/dymbol/SystemPomiaruCzasu.git'
+        dest: {{ SPC_dir }}
+
+    - name: Configure SPC
+      template:
+        src: templates/settings.j2
+        dest: "{{ SPC_dir }}/src/SPC/SPC/settings.py"
+
+    - name: install Python requierments
+      command: 'pip3 install -r "{{ SPC_dir }}"/src/SPC/requirements.txt'
+      become_method: sudo

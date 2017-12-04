@@ -1,0 +1,3 @@
+---
+- import_playbook: clean_DGallery.yml
+- import_playbook: install_DGallery.yml

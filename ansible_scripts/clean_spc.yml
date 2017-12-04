@@ -1,0 +1,21 @@
+---
+- name: DGallery clean playbook
+  hosts: DGallery
+  remote_user: "{{run_user}}"
+  become: yes
+  become_method: sudo
+  vars:
+    albums_dir: "/home/dymbol/DGallery_albums"
+    DGallery_dir: "/home/dymbol/DGallery"
+    run_user: "dymbol"
+    run_group: "dymbol"
+
+  tasks:
+    - name: Deleting DGallery directory
+      file: path="{{ DGallery_dir }}" state=absent
+
+    - name: Deleting archived source code
+      file: path=/tmp/DGallery_code.tgz state=absent
+
+    - name: Deleting albums directory
+      file: path="{{ albums_dir }}" state=absent
