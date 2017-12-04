@@ -91,25 +91,36 @@ class Car(models.Model):
 
 class Team(models.Model):
     start_no = models.DecimalField(decimal_places=0, max_digits=9)
-    driver = models.ForeignKey(Person, on_delete=models.CASCADE,related_name='+',)
-    navigator = models.ForeignKey(Person, on_delete=models.CASCADE, blank=True, related_name='+',)
+    driver = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='+',)
+    navigator = models.ForeignKey(Person, on_delete=models.CASCADE,null=True,  blank=True, related_name='+',)
     race = models.ForeignKey(Race, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
 
     def __str__(self):
-        team_name = "{}.{}, {}.{}".format(
+        if self.navigator is not None:
+            navigator = ", "+self.navigator.name[:1]+'.'+self.navigator.surname
+        else:
+            navigator = ""
+
+        team_name = "{}.{}{}".format(
             self.driver.name[:1],
             self.driver.surname,
-            self.navigator.name[:1],
-            self.navigator.surname
+            navigator
             )
-        print(team_name)
         return "{}: {}".format(self.start_no, team_name)
 
 
-class Lap(models.Model):
+class Track(models.Model):
     race = models.ForeignKey(Race, on_delete=models.CASCADE)
+    name = models.CharField(max_length=24)
+
+    def __str__(self):
+        return self.name
+
+
+class Lap(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
+    track = models.ForeignKey(Track, on_delete=models.CASCADE, null=True)
     loop = models.DecimalField(decimal_places=0, max_digits=9)
     taryfa = models.BooleanField()  # true if "taryfa"
     fee = models.DecimalField(default=0, decimal_places=0, max_digits=9)   # fee in seconds
@@ -117,4 +128,6 @@ class Lap(models.Model):
     stop_time = models.TimeField(blank=True, null=True)
 
     def __str__(self):
-        return "{}, {}, Loop: {}".format(self.race, self.team, self.loop)
+        return "{}, {}, Loop: {}".format(self.track, self.team, self.loop)
+
+
