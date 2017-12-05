@@ -7,21 +7,16 @@
 
       <div class="row">
           <div class="col-lg-12">
-            <div class="info-box blue-bg">
-              <i class="fa fa-car"></i>
-              <div class="count">Team: {{ team.driver }}/{{ team.navigator }}</div>
-              <div class="count">Aktualna pętla: {{ request.session.current_loop}}</div>
-              <div class="count">Aktualna trasa: {{ request.session.current_track_name}}</div>
-                <div class="count" >Aktualny czas: <span id="time_clock"></span></div>
-            </div>
-
-            <!--/.info-box-->
+              <h1>Team: <span class="badge badge-lg badge-secondary">{{ team.driver }}/{{ team.navigator }}</span></h1>
+              <h1>Aktualna pętla: <span class="badge badge-secondary">{{ request.session.current_loop}}</span></h1>
+              <h1>Aktualna trasa: <span class="badge badge-secondary">{{ request.session.current_track_name}}</span></h1>
+              <h1>Aktualny czas: <span class="badge badge-secondary" id="time_clock">New</span></h1>
           </div>
       </div>
       <div class="col-lg-12">
                 <section class="panel">
-                  <div><a class="btn btn-primary" href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę<i class="fa fa-clock-o"></i></a></div>
-                  <div><a class="btn btn-primary" href="">Rozpocznij pomiar<i class="fa fa-clock-o"></i></a></div>
+                  <div><a class="btn btn-info" href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę <i class="fa fa-clock-o"></i></a>
+                  <a class="btn btn-lg btn-danger" href="">Rozpocznij pomiar <i class="fa fa-clock-o"></i></a></div>
                 </section>
       </div>
       </section>
