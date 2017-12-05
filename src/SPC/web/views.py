@@ -47,22 +47,35 @@ def register_result(request):
     results = {}
     Teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
     Tracks = Track.objects.filter(race__id=request.session['chosen_race_id'])
+    last_laps = []
 
+    #get every's team lat lap
     for team in Teams:
-        results[team] = {}
-        for track in Track.objects.filter(race__id=request.session['chosen_race_id']):
-            results[team][track] = []
-            for lap in Lap.objects.filter(track=track, team=team):
-                results[team][track].append(lap)
+        # get last recordered lap
+        lap_tmp = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('-stop_time')[0]
+        print( Lap.objects.filter(track__race__id=request.session['chosen_race_id']).reverse())
+        last_laps.append({
+            "start_no": str(team.start_no),
+            "driver": team.driver,
+            "navigator": team.navigator,
+            "last_lap": "Trasa: {}, Pętla: {}".format(lap_tmp.track, lap_tmp.loop)
+        })
+
+
+    #for team in Teams:
+    #    results[team] = {}
+    #    for track in Track.objects.filter(race__id=request.session['chosen_race_id']):
+    #        results[team][track] = []
+    #        for lap in Lap.objects.filter(track=track, team=team):
+    #            results[team][track].append(lap)
     #import pprint
     #pp = pprint.PrettyPrinter(indent=4)
     #pp.pprint(results)
-
-    context["results"] = results
-    context["tracks"] = Tracks
-    context["laps"] = Lap.objects.all()
+    context["last_laps"] = last_laps
 
     return render(request, 'register_result.html', context)
+
+
 
 
 def race(request, race_id):
@@ -77,7 +90,7 @@ def race(request, race_id):
             redirect('register_result')
             print("valid")
     else:
-        initial={}
+        initial = {}
         print(request.session.keys())
         if 'current_loop' in request.session.keys():
             initial['loop'] = request.session['current_loop']

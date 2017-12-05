@@ -8,7 +8,7 @@
       <div class="row">
           <div class="col-lg-12">
             <div class="info-box blue-bg">
-              <i class="fa fa-cloud-download"></i>
+              <i class="fa fa-car"></i>
               <div class="count">Aktualna pętla: {{ request.session.current_loop}}</div>
               <div class="count">Aktualna trasa: {{ request.session.current_track_name}}</div>
             </div>
@@ -20,16 +20,14 @@
                   <table class="table table-striped table-advance table-hover">
                     <tbody>
                       <tr>
+                          <th>Rejestruj czas</th>
                         <th>Numer startowy</th>
                         <th><i class="icon_profile"></i> Kierowca/Pilot</th>
-                        {% for track in tracks %}
-                            <th>{{ track }}
-                            <th>loop1</th>
-                            <th>loop2</th>
-                            </th>
-                        {% endfor %}
-                      </tr>
-                      {% for team in results %}
+                        <th>Ostatni przejazd</th>
+
+                      {% for team in last_laps %}
+                        </tr>
+                          <td><a class="btn btn-primary" href=""><i class="fa fa-clock-o"></i></a></td>
                           <td>{{ team.start_no }}</td>
                           <td>
                               {{ team.driver }}
@@ -39,13 +37,8 @@
                                 / {{ team.navigator }}
                               {% endif %}
                           </td>
-                          {% for lap in laps %}
-                            {% if lap.team == team %}
-                                <td>{{ lap }}</td>
-                            {% endif %}
-                          {% endfor %}
-
-                        </tr>
+                          <td> {{ team.last_lap }}</td>
+                      </tr>
                       {% endfor %}
                     </tbody>
                   </table>
