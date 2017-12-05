@@ -55,6 +55,7 @@ def register_result(request):
         lap_tmp = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('-stop_time')[0]
         print( Lap.objects.filter(track__race__id=request.session['chosen_race_id']).reverse())
         last_laps.append({
+            "id": str(team.id),
             "start_no": str(team.start_no),
             "driver": team.driver,
             "navigator": team.navigator,
@@ -104,8 +105,9 @@ def race(request, race_id):
 
     #request.session['current_loop'] =
     # request.session['current_track'] =
-
-
     return render(request, 'race.html', {'form': form, "race_id": race_id})
 
 
+def time_meter(request, team_id):
+    CurrentTeam = Team.objects.filter(id=team_id)[0]
+    return render(request, 'time_meter.html', {'team': CurrentTeam})

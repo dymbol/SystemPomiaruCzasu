@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+{% block primary %}
+<div class="row">
+    <section id="main-content">
+      <section class="wrapper">
+
+      <div class="row">
+          <div class="col-lg-12">
+            <div class="info-box blue-bg">
+              <i class="fa fa-car"></i>
+              <div class="count">Team: {{ team.driver }}/{{ team.navigator }}</div>
+              <div class="count">Aktualna pętla: {{ request.session.current_loop}}</div>
+              <div class="count">Aktualna trasa: {{ request.session.current_track_name}}</div>
+
+            </div>
+
+            <!--/.info-box-->
+          </div>
+      </div>
+      <div class="col-lg-12">
+                <section class="panel">
+                  <div><a class="btn btn-primary" href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę<i class="fa fa-clock-o"></i></a></div>
+                  <div><a class="btn btn-primary" href="">Rozpocznij pomiar<i class="fa fa-clock-o"></i></a></div>
+                </section>
+      </div>
+      </section>
+        </section>
+
+    </div>
+{% endblock %}

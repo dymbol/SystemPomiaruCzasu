@@ -27,7 +27,7 @@
 
                       {% for team in last_laps %}
                         </tr>
-                          <td><a class="btn btn-primary" href=""><i class="fa fa-clock-o"></i></a></td>
+                          <td><a class="btn btn-primary" href="{% url 'time_meter' team.id %}"><i class="fa fa-clock-o"></i></a></td>
                           <td>{{ team.start_no }}</td>
                           <td>
                               {{ team.driver }}
