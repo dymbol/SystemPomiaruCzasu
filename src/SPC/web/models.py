@@ -78,7 +78,6 @@ class Car(models.Model):
         blank=True,
         max_length=24
     )
-
     power = models.DecimalField(decimal_places=0, max_digits=9, blank=True)     # unit: Horse Power (KM)
     torque = models.DecimalField(decimal_places=0, max_digits=9, blank=True)     # unit: Nm
     engine_capacity = models.DecimalField(decimal_places=0, max_digits=9)   #unit: ccm
@@ -95,7 +94,8 @@ class Team(models.Model):
     navigator = models.ForeignKey(Person, on_delete=models.CASCADE,null=True,  blank=True, related_name='+',)
     race = models.ForeignKey(Race, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-
+    tclass = models.ForeignKey(CarClass, on_delete=models.CASCADE, related_name='+', )
+    
     def __str__(self):
         if self.navigator is not None:
             navigator = ", "+self.navigator.name[:1]+'.'+self.navigator.surname
