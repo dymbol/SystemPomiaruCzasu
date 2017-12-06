@@ -2,10 +2,10 @@ from django.db import models
 class Person(models.Model):
     name = models.CharField(max_length=24)
     surname = models.CharField(max_length=24)
-    nick = models.CharField(max_length=24, blank=True)
-    mail = models.CharField(max_length=24, blank=True)
-    phone_tel = models.CharField(max_length=24, blank=True)
-    desc = models.CharField(max_length=200, blank=True)
+    nick = models.CharField(max_length=24, blank=True, null=True)
+    mail = models.CharField(max_length=24, blank=True, null=True)
+    phone_tel = models.CharField(max_length=24, blank=True, null=True)
+    desc = models.CharField(max_length=200, blank=True, null=True)
     race_licence = models.BooleanField()
 
     def __str__(self):
@@ -57,7 +57,7 @@ class Car(models.Model):
     manufacurer = models.CharField(max_length=24, )
     model = models.CharField(max_length=24, )
     desc = models.CharField(max_length=24, )
-    engine_model = models.CharField(max_length=24, blank=True)
+    engine_model = models.CharField(max_length=24, blank=True, null=True)
     fuel_choices = (
         ("gasoline", "gasoline"),
         ("diesel", "diesel"),
@@ -72,10 +72,11 @@ class Car(models.Model):
     accel_type = models.CharField(
         choices=accel_type_choices,
         blank=True,
-        max_length=24
+        max_length=24,
+        null=True
     )
-    power = models.DecimalField(decimal_places=0, max_digits=9, blank=True)     # unit: Horse Power (KM)
-    torque = models.DecimalField(decimal_places=0, max_digits=9, blank=True)     # unit: Nm
+    power = models.DecimalField(decimal_places=0, max_digits=9, blank=True, null=True)     # unit: Horse Power (KM)
+    torque = models.DecimalField(decimal_places=0, max_digits=9, blank=True, null=True)     # unit: Nm
     engine_capacity = models.DecimalField(decimal_places=0, max_digits=9)   #unit: ccm
     wankel = models.BooleanField()
     hybrid = models.BooleanField()

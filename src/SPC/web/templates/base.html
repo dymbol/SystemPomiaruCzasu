@@ -40,7 +40,7 @@
       </div>
 
       <!--logo start-->
-      <a href="index.html" class="logo">SYSTEM POMIARU CZASU<span class="lite"> - {{ request.session.chosen_race_name}}</span></a>
+      <a href="{% url 'index' %}" class="logo">SYSTEM POMIARU CZASU<span class="lite"> - {{ request.session.chosen_race_name}}</span></a>
       <!--logo end-->
 
       <div class="nav search-row" id="top_menu">

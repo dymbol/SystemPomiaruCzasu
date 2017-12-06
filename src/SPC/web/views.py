@@ -39,45 +39,86 @@ def team_list(request):
 
 def results(request):
     context = {}
-    context["teams"] = Team.objects.filter(race__id=request.session['chosen_race_id'])
-    return render(request, 'results.html', context)
+    best_laps = {}
+
+    #teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
+
+    #tracs on that race
+    tracks = Track.objects.filter(race__id=request.session['chosen_race_id'])
+
+    laps = Lap.objects.filter(track__id=request.session['current_track_id'])
 
 
-def register_result(request):
-    context = {}
-    results = {}
-    Teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
-    Tracks = Track.objects.filter(race__id=request.session['chosen_race_id'])
-    last_laps = []
+    #different over race type
+    #  TIME ATTACK
+    # - podział na klasy
+    # - najniższy wynik wygrywa
 
-    #get every's team lat lap
-    for team in Teams:
-        # get last recordered lap
-        lap_tmp = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('-stop_time')[0]
-        print( Lap.objects.filter(track__race__id=request.session['chosen_race_id']).reverse())
-        last_laps.append({
-            "id": str(team.id),
-            "start_no": str(team.start_no),
-            "driver": team.driver,
-            "navigator": team.navigator,
-            "last_lap": "Trasa: {}, Pętla: {}".format(lap_tmp.track, lap_tmp.loop)
-        })
+    klasy = CarClass.objects.all()
+    laps = {}
+    # iterate over car's classes to find best lap on each
+    for klasa in klasy:
+        laps[klasa.name]=[]
+        lp = Lap.objects.filter(team__tclass=klasa).order_by('result')
+        if lp.exists():
+            for l in lp:
+                laps[klasa.name].append(l)
 
 
-    #for team in Teams:
+
+
+
+
+
+
+
+
+    import pprint
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(laps)
+
+    # for team in teams:
     #    results[team] = {}
     #    for track in Track.objects.filter(race__id=request.session['chosen_race_id']):
     #        results[team][track] = []
     #        for lap in Lap.objects.filter(track=track, team=team):
     #            results[team][track].append(lap)
-    #import pprint
-    #pp = pprint.PrettyPrinter(indent=4)
-    #pp.pprint(results)
+
+
+
+
+
+    context["laps"] = laps
+    context["klasy"] = klasy
+    return render(request, 'results.html', context)
+
+
+def register_result(request):
+    context = {}
+    Teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
+    last_laps = []
+
+    # get every's team last lap
+    for team in Teams:
+        print(team)
+        # get last recordered lap
+        if Lap.objects.filter(track__race__id=request.session['chosen_race_id'], team__id=team.id).exists():
+            lap_tmp = Lap.objects.filter(track__race__id=request.session['chosen_race_id'], team__id=team.id).order_by('-stop_time')[0]
+            lap_tmp_track = lap_tmp.track
+            lap_tmp_loop = lap_tmp.loop
+        else:
+            lap_tmp_track = "brak"
+            lap_tmp_loop = "brak"
+        last_laps.append({
+            "id": str(team.id),
+            "start_no": str(team.start_no),
+            "driver": team.driver,
+            "navigator": team.navigator,
+            "last_lap": "Trasa: {}, Pętla: {}".format(lap_tmp_track, lap_tmp_loop)
+        })
     context["last_laps"] = last_laps
-
+    print(last_laps)
     return render(request, 'register_result.html', context)
-
-
 
 
 def race(request, race_id):
@@ -115,26 +156,25 @@ def time_meter(request, team_id):
 
 
 def save_result(request, team_id, track_id, _loop, _result, _fee, _taryfa):
-
-    ErrorMsgs = []
-    #checks
+    error_msgs = []
+    # checks
     if not Team.objects.filter(id=team_id).exists():
-        ErrorMsgs.append("Team with id: {} doesn't exist".format(team_id))
+        error_msgs.append("Team with id: {} doesn't exist".format(team_id))
     if not Track.objects.filter(id=track_id).exists():
-        ErrorMsgs.append("Track with id: {} doesn't exist".format(track_id))
+        error_msgs.append("Track with id: {} doesn't exist".format(track_id))
     if not type(_loop) == int:
-        ErrorMsgs.append("Loop: digit required")
+        error_msgs.append("Loop: digit required")
     if not type(_result) == int:
-        ErrorMsgs.append("Result: digit required")
+        error_msgs.append("Result: digit required")
     if not type(_fee) == int:
-        ErrorMsgs.append("Fee: digit required")
+        error_msgs.append("Fee: digit required")
     if Lap.objects.filter(team__id=team_id, track__id=track_id, loop=_loop).exists():
-        ErrorMsgs.append("Lap with that track and loop already registered!")
+        error_msgs.append("Lap with that track and loop already registered!")
 
-    if len(ErrorMsgs) > 0:
+    if len(error_msgs) > 0:
         data = {
             "status": "nok",
-            "msg": ErrorMsgs
+            "msg": error_msgs
         }
 
     else:
