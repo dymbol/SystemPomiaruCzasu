@@ -1,146 +1,73 @@
 {% extends 'base.html' %}
 {% load static from staticfiles %}
 {% block primary %}
-<div class="row">
-    <section id="main-content">
-      <section class="wrapper">
-
-      <div class="row">
-          <div class="col-lg-12">
-              <h1>Team: <span class="badge badge-lg badge-secondary">{{ team.driver }}/{{ team.navigator }}</span></h1>
-              <h1>Aktualna pętla: <span class="badge badge-secondary">{{ request.session.current_loop}}</span></h1>
-              <h1>Aktualna trasa: <span class="badge badge-secondary">{{ request.session.current_track_name}}</span></h1>
-              <h1>Aktualny czas: <span class="badge badge-secondary" id="time_clock">New</span></h1>
-          </div>
-      </div>
-      <div class="col-lg-12">
-                <section class="panel">
-                  <div><a class="btn btn-info" href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę <i class="fa fa-clock-o"></i></a>
-                  <button onclick="start_measure()" type="button" id="btn_start">Start</button>
-                  <button onclick="stop_measure()" type="button" id="btn_stop">Stop</button>
-                  <button onclick="clear_measure()" type="button" id="btn_clear">Reset</button>
-                      <button onclick="send_result()" type="button" id="btn_send">Wyślij wynik</button>
-                    <div id="stoper_info"></div></div>
-                    <div>Wynik [ms]:<span id="result"></span></div>
-                    <div>Kara [s]: <span id="kara"></span></div>
-                    <div>Taryfa: <span id="taryfa"></span></div>
-                    <div>Zapis wyniku: <span id="send_result_info"></span></div>
-                      <div>
-                          <button onclick="add_fee()" type="button" id="btn_kara">Kara +5s</button>
-                          <button onclick="add_taryfa()" type="button" id="btn_taryfa">Taryfa</button>
-                      </div>
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper">
 
 
-                </section>
-      </div>
-      </section>
-        </section>
+        <div class="row">
+            <div class="col-md-3" ></div>
+            <div class="col-md-6">
 
-    </div>
+                <div class="alert alert-success" role="alert">
+                    <span id="stoper_info">Gotowy do pomiaru</span>
+                </div>
 
-
-    <script>
-    function startTime() {
-        var today = new Date();
-        var h = today.getHours();
-        var m = today.getMinutes();
-        var s = today.getSeconds();
-        var ms = today.getMilliseconds();
-        m = checkTime(m);
-        s = checkTime(s);
-        document.getElementById('time_clock').innerHTML =
-        h + ":" + m + ":" + s+ ":" + ms;
-        var t = setTimeout(startTime, 500);
-    }
-    function checkTime(i) {
-        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
-        return i;
-    }
-    startTime();
-    </script>
+                <div id="alerts"></div>
+                <div><span class="h3">Team:</span> <span class="h4">{{ team.driver }}/{{ team.navigator }}</span></div>
+                <div><span class="h3">Aktualna pętla:</span> <span class="h4">{{ request.session.current_loop}}</span>
+                </div>
+                <div><span class="h3">Aktualna trasa:</span> <span
+                        class="h4">{{ request.session.current_track_name}}</span></div>
+                <div><span class="h3">Aktualny czas: </span> <span class="h4" id="time_clock">-</span></div>
+                <div><span class="h3">Wynik [ms]:    </span> <span class="h4" id="result">     </span></div>
+                <div><span class="h3">Kara [s]:      </span> <span class="h4" id="kara">       </span></div>
+                <div><span class="h3">Taryfa:        </span> <span class="h4" id="taryfa">     </span></div>
+                <div><span class="h3">Status zapisu wyniku: </span> <span class="h4" id="send_result_info"></span></div>
+                <p></p>
 
 
-    <script>
-    var StartTime;
-    var EndTime;
-    var TimeDiff;
-    var StartLock = false;
-    var StopLock = false;
-    var MeasureMade = false;
-    var fee = 0;
-    var taryfa = 0;
-
-   function start_measure()
-   {
-        if( StartLock == false )
-        {
-            StartLock = true;
-
-            StartTime = new Date();
-            console.log(StartTime);
-
-            $("#btn_start").attr("disabled", true);
-            $("#stoper_info").text("Pomiar w toku");
-        } else {console.log("Can't start")}
-   };
-
-   function stop_measure()
-   {
-        if(MeasureMade == false) {
+            </div>
+            <div class="col-md-3" ></div>
+        </div>
+        <div class="row">
+            <div class="col-md-3" ></div>
+            <div class="col-md-6">
 
 
-            EndTime = new Date();
-            console.log(EndTime);
-
-            TimeDiff = EndTime - StartTime;
-
-            MeasureMade = true;
-            console.log(TimeDiff);
-
-        }else{console.log("Measure already done!")}
-        $('#result').text(TimeDiff);
-        $("#btn_stop").attr("disabled", true);
-
-   };
-
-   function clear_measure()
-   {
-    StartLock = false;
-    StartLock = false;
-    StopLock = false;
-    MeasureMade = false;
-    $('#result').text("-");
-    $("#btn_start").attr("disabled", false);
-    $("#btn_stop").attr("disabled", false);
-   }
+                <button class="btn btn-success btn-lg btn-block" onclick="start_measure()" type="button" id="btn_start">
+                    Start
+                </button>
+                <button class="btn btn-danger btn-lg btn-block" onclick="stop_measure()" type="button" id="btn_stop">
+                    Stop
+                </button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="send_result({{ team.id }},{{ request.session.current_track_id }},{{ request.session.current_loop}})" type="button" id="btn_send">
+                    Wyślij wynik
+                </button>
+                <p></p>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <a class="btn btn-info " href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę <i
+                            class="fa fa-clock-o"></i></a>
+                    <button class="btn btn-info " onclick="clear_measure()" type="button" id="btn_clear">Reset</button>
+                    <button class="btn btn-info" onclick="add_fee()" type="button" id="btn_kara">Kara +5s</button>
+                    <button class="btn btn-info" onclick="add_taryfa()" type="button" id="btn_taryfa">Taryfa</button>
+                </div>
 
 
-    function add_fee()
-    {
-        fee = fee + 5
-        $('#kara').text(fee);
-    }
+                <div>
 
-    function add_taryfa()
-    {
-        taryfa = 1
-        $('#taryfa').text("Tak");
-    }
-
-    function send_result()
-    {
-        $.get( "/save_result/{{ team.id }}/{{ request.session.current_track_id }}/{{ request.session.current_loop}}/"+TimeDiff+"/"+fee+"/"+taryfa, function( data ) {
-            $( "#send_result_info" ).text( data["status"] );
-            console.log();
-            if (data["status"] == "ok") {
-                alert( "Wynik został zapisany" );
-            }else{
-                alert( "Bąd zapisu wyniku" );
-            }
+                </div>
+            </div>
+            <div class="col-md-3" ></div>
+        </div>
 
 
-        });
-    }
+    </section>
+</section>
+<script src="{% static 'js/spc.js' %}"></script>
 
-    </script>
+
+
+</div>
 {% endblock %}

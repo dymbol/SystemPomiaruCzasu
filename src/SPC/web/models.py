@@ -1,8 +1,4 @@
 from django.db import models
-
-# Create your models here.
-
-
 class Person(models.Model):
     name = models.CharField(max_length=24)
     surname = models.CharField(max_length=24)
@@ -126,7 +122,7 @@ class Lap(models.Model):
     fee = models.DecimalField(default=0, decimal_places=0, max_digits=9)   # fee in seconds
     start_time = models.TimeField(blank=True, null=True)
     stop_time = models.TimeField(blank=True, null=True)
-    result = models.BigIntegerField() # result in milliseconds
+    result = models.BigIntegerField()  #result in milliseconds
 
     def __str__(self):
         return "{}, {}, Loop: {}".format(self.track, self.team, self.loop)
