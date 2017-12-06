@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import EditRace
+from django.http import JsonResponse
 
 
 
@@ -111,3 +112,50 @@ def race(request, race_id):
 def time_meter(request, team_id):
     CurrentTeam = Team.objects.filter(id=team_id)[0]
     return render(request, 'time_meter.html', {'team': CurrentTeam})
+
+
+def save_result(request, team_id, track_id, _loop, _result, _fee, _taryfa):
+
+    ErrorMsgs = []
+    #checks
+    if not Team.objects.filter(id=team_id).exists():
+        ErrorMsgs.append("Team with id: {} doesn't exist".format(team_id))
+    if not Track.objects.filter(id=track_id).exists():
+        ErrorMsgs.append("Track with id: {} doesn't exist".format(track_id))
+    if not type(_loop) == int:
+        ErrorMsgs.append("Loop: digit required")
+    if not type(_result) == int:
+        ErrorMsgs.append("Result: digit required")
+    if not type(_fee) == int:
+        ErrorMsgs.append("Fee: digit required")
+    if Lap.objects.filter(team__id=team_id, track__id=track_id, loop=_loop).exists():
+        ErrorMsgs.append("Lap with that track and loop already registered!")
+
+    if len(ErrorMsgs) > 0:
+        data = {
+            "status": "nok",
+            "msg": ErrorMsgs
+        }
+
+    else:
+        new_lap = Lap(
+            team=Team.objects.filter(id=team_id)[0],
+            track=Track.objects.filter(id=track_id)[0],
+            loop=abs(_loop),
+            fee=abs(_fee),
+            result=abs(_result)
+        )
+        if _taryfa == 1:
+            new_lap.taryfa = True
+        else:
+            new_lap.taryfa = False
+
+        new_lap.save()
+
+        data = {
+            "status": "ok"
+        }
+
+    return JsonResponse(data)
+
+

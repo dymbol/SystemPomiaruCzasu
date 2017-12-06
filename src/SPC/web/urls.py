@@ -9,7 +9,10 @@ urlpatterns = [
     path('results', views.results, name="results"),
     path('result/register', views.register_result, name="register_result"),
     path('race/<int:race_id>', views.race, name="race"),
-    path('time_meter/<int:team_id>', views.time_meter, name="time_meter")
+    path('time_meter/<int:team_id>', views.time_meter, name="time_meter"),
+    path('save_result/<int:team_id>/<int:track_id>/<int:_loop>/<int:_result>/<int:_fee>/<int:_taryfa>',
+         views.save_result, name="save_result")
+
     #path('articles/2003/', views.special_case_2003),
     #path('articles/<int:year>/', views.year_archive),
     #path('articles/<int:year>/<int:month>/', views.month_archive),

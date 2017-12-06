@@ -95,7 +95,7 @@ class Team(models.Model):
     race = models.ForeignKey(Race, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     tclass = models.ForeignKey(CarClass, on_delete=models.CASCADE, related_name='+', )
-    
+
     def __str__(self):
         if self.navigator is not None:
             navigator = ", "+self.navigator.name[:1]+'.'+self.navigator.surname
@@ -126,6 +126,7 @@ class Lap(models.Model):
     fee = models.DecimalField(default=0, decimal_places=0, max_digits=9)   # fee in seconds
     start_time = models.TimeField(blank=True, null=True)
     stop_time = models.TimeField(blank=True, null=True)
+    result = models.BigIntegerField() # result in milliseconds
 
     def __str__(self):
         return "{}, {}, Loop: {}".format(self.track, self.team, self.loop)

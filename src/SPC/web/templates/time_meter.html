@@ -16,7 +16,21 @@
       <div class="col-lg-12">
                 <section class="panel">
                   <div><a class="btn btn-info" href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę <i class="fa fa-clock-o"></i></a>
-                  <a class="btn btn-lg btn-danger" href="">Rozpocznij pomiar <i class="fa fa-clock-o"></i></a></div>
+                  <button onclick="start_measure()" type="button" id="btn_start">Start</button>
+                  <button onclick="stop_measure()" type="button" id="btn_stop">Stop</button>
+                  <button onclick="clear_measure()" type="button" id="btn_clear">Reset</button>
+                      <button onclick="send_result()" type="button" id="btn_send">Wyślij wynik</button>
+                    <div id="stoper_info"></div></div>
+                    <div>Wynik [ms]:<span id="result"></span></div>
+                    <div>Kara [s]: <span id="kara"></span></div>
+                    <div>Taryfa: <span id="taryfa"></span></div>
+                    <div>Zapis wyniku: <span id="send_result_info"></span></div>
+                      <div>
+                          <button onclick="add_fee()" type="button" id="btn_kara">Kara +5s</button>
+                          <button onclick="add_taryfa()" type="button" id="btn_taryfa">Taryfa</button>
+                      </div>
+
+
                 </section>
       </div>
       </section>
@@ -42,6 +56,91 @@
         if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
         return i;
     }
+    startTime();
     </script>
-    <body onload="startTime()">
+
+
+    <script>
+    var StartTime;
+    var EndTime;
+    var TimeDiff;
+    var StartLock = false;
+    var StopLock = false;
+    var MeasureMade = false;
+    var fee = 0;
+    var taryfa = 0;
+
+   function start_measure()
+   {
+        if( StartLock == false )
+        {
+            StartLock = true;
+
+            StartTime = new Date();
+            console.log(StartTime);
+
+            $("#btn_start").attr("disabled", true);
+            $("#stoper_info").text("Pomiar w toku");
+        } else {console.log("Can't start")}
+   };
+
+   function stop_measure()
+   {
+        if(MeasureMade == false) {
+
+
+            EndTime = new Date();
+            console.log(EndTime);
+
+            TimeDiff = EndTime - StartTime;
+
+            MeasureMade = true;
+            console.log(TimeDiff);
+
+        }else{console.log("Measure already done!")}
+        $('#result').text(TimeDiff);
+        $("#btn_stop").attr("disabled", true);
+
+   };
+
+   function clear_measure()
+   {
+    StartLock = false;
+    StartLock = false;
+    StopLock = false;
+    MeasureMade = false;
+    $('#result').text("-");
+    $("#btn_start").attr("disabled", false);
+    $("#btn_stop").attr("disabled", false);
+   }
+
+
+    function add_fee()
+    {
+        fee = fee + 5
+        $('#kara').text(fee);
+    }
+
+    function add_taryfa()
+    {
+        taryfa = 1
+        $('#taryfa').text("Tak");
+    }
+
+    function send_result()
+    {
+        $.get( "/save_result/{{ team.id }}/{{ request.session.current_track_id }}/{{ request.session.current_loop}}/"+TimeDiff+"/"+fee+"/"+taryfa, function( data ) {
+            $( "#send_result_info" ).text( data["status"] );
+            console.log();
+            if (data["status"] == "ok") {
+                alert( "Wynik został zapisany" );
+            }else{
+                alert( "Bąd zapisu wyniku" );
+            }
+
+
+        });
+    }
+
+    </script>
 {% endblock %}
