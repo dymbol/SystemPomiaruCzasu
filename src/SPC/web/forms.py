@@ -3,7 +3,6 @@ from web.models import Track
 
 
 class EditRace(forms.Form):
-    loop = forms.DecimalField(label='Zmiana Pętli')
     track = forms.ModelChoiceField(queryset=Track.objects.all())
 
     def __init__(self, *args, **kwargs):

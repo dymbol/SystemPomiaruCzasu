@@ -95,7 +95,7 @@
 
     function send_result(team_id, track_id, loop)
     {
-        $.get( "/save_result/"+team_id+"/"+track_id+"/"+loop+"/"+TimeDiff+"/"+fee+"/"+taryfa, function( data ) {
+        $.get( "/save_result/"+team_id+"/"+track_id+"/"+TimeDiff+"/"+fee+"/"+taryfa, function( data ) {
             $( "#send_result_info" ).text( data["status"] );
 
             jQuery.each(data["msg"], function() {

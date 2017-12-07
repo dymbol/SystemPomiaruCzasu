@@ -118,7 +118,6 @@ class Track(models.Model):
 class Lap(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     track = models.ForeignKey(Track, on_delete=models.CASCADE, null=True)
-    loop = models.DecimalField(decimal_places=0, max_digits=9)
     taryfa = models.BooleanField()  # true if "taryfa"
     fee = models.DecimalField(default=0, decimal_places=0, max_digits=9)   # fee in seconds
     start_time = models.TimeField(blank=True, null=True)
@@ -126,6 +125,6 @@ class Lap(models.Model):
     result = models.BigIntegerField()  #result in milliseconds
 
     def __str__(self):
-        return "{}, {}, Loop: {}".format(self.track, self.team, self.loop)
+        return "{}, {}".format(self.track, self.team)
 
 

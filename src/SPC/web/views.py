@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import EditRace
 from django.http import JsonResponse
+from django.db import connections
 
 
 
@@ -37,59 +38,51 @@ def team_list(request):
     return render(request, 'teams.html', context)
 
 
+def dictfetchall(cursor):
+    "Return all rows from a cursor as a dict"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+
 def results(request):
     context = {}
-    best_laps = {}
 
-    #teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
-
-    #tracs on that race
-    tracks = Track.objects.filter(race__id=request.session['chosen_race_id'])
-
-    laps = Lap.objects.filter(track__id=request.session['current_track_id'])
-
+    teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
 
     #different over race type
     #  TIME ATTACK
     # - podział na klasy
     # - najniższy wynik wygrywa
 
-    klasy = CarClass.objects.all()
-    laps = {}
-    # iterate over car's classes to find best lap on each
-    for klasa in klasy:
-        laps[klasa.name]=[]
-        lp = Lap.objects.filter(team__tclass=klasa).order_by('result')
-        if lp.exists():
-            for l in lp:
-                laps[klasa.name].append(l)
+    #class result
 
+    #TODO
 
+    # general result
 
+    #fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
 
+    query = '''
+        SELECT (l.taryfa*1.5*MAX(l.result)) AS TARYFA_TIME, l.id LAP_ID, team.id as TEAM_ID, team.start_no, l.taryfa, l.fee, MIN(l.result) AS MIN_RESULT, (l.result+(l.fee*5000)) AS RESULT_WITH_FEE,
+        CASE WHEN (l.taryfa*1.5*MAX(l.result)) IS 0 THEN (l.result+(l.fee*5000)) ELSE (l.taryfa*1.5*MAX(l.result)) END AS OVERALL_TIME
+        from web_lap l
+        JOIN web_track track ON l.track_id=track.id
+        JOIN web_team team ON l.team_id=team.id
+        JOIN web_person person ON team.driver_id=person.id
+        WHERE track.race_id=1
+        GROUP BY l.team_id
+        ORDER BY  OVERALL_TIME
+    '''
+    cursor = connections['default'].cursor()
+    cursor.execute(query)
+    # import pprint
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pp.pprint(dictfetchall(cursor))
 
-
-
-
-
-
-    import pprint
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(laps)
-
-    # for team in teams:
-    #    results[team] = {}
-    #    for track in Track.objects.filter(race__id=request.session['chosen_race_id']):
-    #        results[team][track] = []
-    #        for lap in Lap.objects.filter(track=track, team=team):
-    #            results[team][track].append(lap)
-
-
-
-
-
-    context["laps"] = laps
-    context["klasy"] = klasy
+    context["team"] = teams
+    context["general_laps"] = dictfetchall(cursor)
     return render(request, 'results.html', context)
 
 
@@ -105,16 +98,14 @@ def register_result(request):
         if Lap.objects.filter(track__race__id=request.session['chosen_race_id'], team__id=team.id).exists():
             lap_tmp = Lap.objects.filter(track__race__id=request.session['chosen_race_id'], team__id=team.id).order_by('-stop_time')[0]
             lap_tmp_track = lap_tmp.track
-            lap_tmp_loop = lap_tmp.loop
         else:
             lap_tmp_track = "brak"
-            lap_tmp_loop = "brak"
         last_laps.append({
             "id": str(team.id),
             "start_no": str(team.start_no),
             "driver": team.driver,
             "navigator": team.navigator,
-            "last_lap": "Trasa: {}, Pętla: {}".format(lap_tmp_track, lap_tmp_loop)
+            "last_lap": "Trasa: {}".format(lap_tmp_track)
         })
     context["last_laps"] = last_laps
     print(last_laps)
@@ -127,16 +118,12 @@ def race(request, race_id):
     if request.method == 'POST':
         form = EditRace(request.POST)
         if form.is_valid():
-            request.session['current_loop'] = int(form.cleaned_data['loop'])
             request.session['current_track_id'] = form.cleaned_data['track'].id
             request.session['current_track_name'] = form.cleaned_data['track'].name
             redirect('register_result')
             print("valid")
     else:
         initial = {}
-        print(request.session.keys())
-        if 'current_loop' in request.session.keys():
-            initial['loop'] = request.session['current_loop']
         if 'current_track_name' in request.session.keys():
             initial['track'] = Track.objects.filter(id=request.session['current_track_id'])
         form = EditRace(
@@ -145,7 +132,6 @@ def race(request, race_id):
         )
         print(initial)
 
-    #request.session['current_loop'] =
     # request.session['current_track'] =
     return render(request, 'race.html', {'form': form, "race_id": race_id})
 
@@ -155,21 +141,19 @@ def time_meter(request, team_id):
     return render(request, 'time_meter.html', {'team': CurrentTeam})
 
 
-def save_result(request, team_id, track_id, _loop, _result, _fee, _taryfa):
+def save_result(request, team_id, track_id, _result, _fee, _taryfa):
     error_msgs = []
     # checks
     if not Team.objects.filter(id=team_id).exists():
         error_msgs.append("Team with id: {} doesn't exist".format(team_id))
     if not Track.objects.filter(id=track_id).exists():
         error_msgs.append("Track with id: {} doesn't exist".format(track_id))
-    if not type(_loop) == int:
-        error_msgs.append("Loop: digit required")
     if not type(_result) == int:
         error_msgs.append("Result: digit required")
     if not type(_fee) == int:
         error_msgs.append("Fee: digit required")
-    if Lap.objects.filter(team__id=team_id, track__id=track_id, loop=_loop).exists():
-        error_msgs.append("Lap with that track and loop already registered!")
+    if Lap.objects.filter(team__id=team_id, track__id=track_id,).exists():
+        error_msgs.append("Lap with that track already registered!")
 
     if len(error_msgs) > 0:
         data = {
@@ -181,7 +165,6 @@ def save_result(request, team_id, track_id, _loop, _result, _fee, _taryfa):
         new_lap = Lap(
             team=Team.objects.filter(id=team_id)[0],
             track=Track.objects.filter(id=track_id)[0],
-            loop=abs(_loop),
             fee=abs(_fee),
             result=abs(_result)
         )
