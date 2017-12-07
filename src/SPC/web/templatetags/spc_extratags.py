@@ -8,7 +8,6 @@ import datetime
 def GetTeamName(value):
     """get Team Name by the given id"""
     team = Team.objects.filter(id=value)
-    print(team)
     if team[0].navigator is None:
         team_name="{}.{}".format(team[0].driver.name,team[0].driver.surname)
     else:

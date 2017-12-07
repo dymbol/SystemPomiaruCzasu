@@ -8,8 +8,6 @@ from .forms import EditRace
 from django.http import JsonResponse
 from django.db import connections
 
-
-
 def index(request):
     context = {}
     context["races"] = Race.objects.all()  # .dates('creation_date', 'year').distinct()
@@ -17,7 +15,7 @@ def index(request):
         context["chosen_race_id"] = request.session['chosen_race_id']       # get the id of chosen race
     return render(request, 'index.html', context)
 
-
+@login_required
 def choose_race(request, race_id=None):
     '''
 
@@ -92,14 +90,10 @@ def results(request):
             GROUP BY l.team_id
             ORDER BY  OVERALL_TIME
         '''.format(max_result.result, max_result.result,max_result.result,klasa[0])    # pass carclass id to query
-        print(query_result_by_class)
         cursor.execute(query_result_by_class)
 
         # create list with carclasses names (used in template)
         context["classes_laps"].append({klasa[1]: dictfetchall(cursor)})
-        import pprint
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(context["classes_laps"])
 
     # ////// general results //////
 
@@ -127,18 +121,18 @@ def results(request):
     return render(request, 'results.html', context)
 
 
+@login_required
 def register_result(request):
     if "chosen_race_id" not in request.session.keys():
         return redirect('index')
     if "current_track_id" not in request.session.keys():
-        return redirect('race')
+        return redirect('race',request.session['chosen_race_id'])
     context = {}
     Teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
     last_laps = []
 
     # get every's team last lap
     for team in Teams:
-        print(team)
         # get last recordered lap
         if Lap.objects.filter(track__race__id=request.session['chosen_race_id'], team__id=team.id).exists():
             lap_tmp = Lap.objects.filter(track__race__id=request.session['chosen_race_id'], team__id=team.id).order_by('-stop_time')[0]
@@ -153,10 +147,10 @@ def register_result(request):
             "last_lap": "Trasa: {}".format(lap_tmp_track)
         })
     context["last_laps"] = last_laps
-    print(last_laps)
     return render(request, 'register_result.html', context)
 
 
+@login_required
 def race(request, race_id):
     context = {}
 
@@ -166,7 +160,6 @@ def race(request, race_id):
             request.session['current_track_id'] = form.cleaned_data['track'].id
             request.session['current_track_name'] = form.cleaned_data['track'].name
             redirect('register_result')
-            print("valid")
     else:
         initial = {}
         if 'current_track_name' in request.session.keys():
@@ -175,17 +168,17 @@ def race(request, race_id):
             race_id=race_id,
             initial=initial
         )
-        print(initial)
 
     # request.session['current_track'] =
     return render(request, 'race.html', {'form': form, "race_id": race_id})
 
-
+@login_required
 def time_meter(request, team_id):
     CurrentTeam = Team.objects.filter(id=team_id)[0]
     return render(request, 'time_meter.html', {'team': CurrentTeam})
 
 
+@login_required
 def save_result(request, team_id, track_id, _result, _fee, _taryfa):
     error_msgs = []
     # checks
