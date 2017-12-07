@@ -34,7 +34,7 @@
                         {% endif %}
                         <td>
                           <div class="btn-group">
-                            {% if chosen_race_id == race.id %}
+                            {% if request.session.chosen_race_id == race.id %}
                                 <a class="btn btn-success" disabled><i class="icon_check_alt2"></i></a>
                             {% else %}
                                 <a class="btn btn-primary" href="{% url 'choose_race' race.id %}"><i class="icon_plus_alt2"></i></a>

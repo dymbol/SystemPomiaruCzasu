@@ -33,6 +33,7 @@
                                    <table class="table table-striped table-advance table-hover">
                                       <tbody>
                                       <tr>
+                                        <th>Pozycja</th>
                                         <th>Wynik taryfa </th>
                                         <th><i class="icon_profile"></i>Team</th>
                                           <th> Numer startowy</th>
@@ -44,6 +45,7 @@
                                       </tr>
                                             {% for el2 in data %}
                                                 <tr>
+                                                <td>{{forloop.counter}}</td>
                                                 {% for label, value in el2.items %}
                                                     {% if label != "LAP_ID" %}
                                                             {% if label == "taryfa" %}
@@ -84,7 +86,7 @@
                        <table class="table table-striped table-advance table-hover">
                           <tbody>
                           <tr>
-
+                                        <th>Pozycja</th>
                             <th>Wynik taryfa </th>
                             <th><i class="icon_profile"></i>Team</th>
 
@@ -99,9 +101,13 @@
                               <th></i> Wynik końcowy [min:s:ms]</th>
                           </tr>
                           {% for lap in general_laps %}
+
                             <tr>
+                            <td>{{forloop.counter}}</td>
                                 {% for label, value in lap.items %}
+
                                     {% if label != "LAP_ID" %}
+
                                             {% if label == "taryfa" %}
                                                 {% if value == True %}
                                                     <td><span class="badge badge-danger">Tak</span></td>
