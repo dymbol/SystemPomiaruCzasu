@@ -47,7 +47,9 @@ def dictfetchall(cursor):
     ]
 
 def results(request):
+    cursor = connections['default'].cursor()
     context = {}
+    context["classes_laps"]=[]
 
     teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
 
@@ -56,13 +58,41 @@ def results(request):
     # - podział na klasy
     # - najniższy wynik wygrywa
 
-    #class result
+    # ////// classes results //////
+    # get only classes wich are used in this race
+    this_race_classes_query='''
+        SELECT team.tclass_id, klasa.name
+        FROM web_carclass klasa
+        JOIN web_team team ON team.tclass_id=klasa.id
+        WHERE team.race_id={}
+        GROUP BY team.tclass_id
+        '''.format(request.session['chosen_race_id'])
+    cursor.execute(this_race_classes_query)
+    for klasa in cursor.fetchall():
+        # fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
+        query_result_by_class='''
+            SELECT (l.taryfa*1.5*MAX(l.result)) AS TARYFA_TIME, l.id LAP_ID, team.id as TEAM_ID, team.start_no, l.taryfa, l.fee, MIN(l.result) AS MIN_RESULT, (l.result+(l.fee*5000)) AS RESULT_WITH_FEE,
+            CASE WHEN (l.taryfa*1.5*MAX(l.result)) IS 0 THEN (l.result+(l.fee*5000)) ELSE (l.taryfa*1.5*MAX(l.result)) END AS OVERALL_TIME
+            from web_lap l 
+            JOIN web_track track ON l.track_id=track.id 
+            JOIN web_team team ON l.team_id=team.id 
+            JOIN web_person person ON team.driver_id=person.id 
+            WHERE track.race_id=1 
+            AND  team.tclass_id={} 
+            GROUP BY l.team_id
+            ORDER BY  OVERALL_TIME
+        '''.format(klasa[0])    # pass carclass id to query
+        cursor.execute(query_result_by_class)
 
-    #TODO
+        # create list with carclasses names (used in template)
+        context["classes_laps"].append({klasa[1]: dictfetchall(cursor)})
+        import pprint
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(context["classes_laps"])
 
-    # general result
+    # ////// general results //////
 
-    #fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
+    # fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
 
     query = '''
         SELECT (l.taryfa*1.5*MAX(l.result)) AS TARYFA_TIME, l.id LAP_ID, team.id as TEAM_ID, team.start_no, l.taryfa, l.fee, MIN(l.result) AS MIN_RESULT, (l.result+(l.fee*5000)) AS RESULT_WITH_FEE,
@@ -75,7 +105,6 @@ def results(request):
         GROUP BY l.team_id
         ORDER BY  OVERALL_TIME
     '''
-    cursor = connections['default'].cursor()
     cursor.execute(query)
     # import pprint
     # pp = pprint.PrettyPrinter(indent=4)
