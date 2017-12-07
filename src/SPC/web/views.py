@@ -81,7 +81,7 @@ def results(request):
     # pp = pprint.PrettyPrinter(indent=4)
     # pp.pprint(dictfetchall(cursor))
 
-    context["team"] = teams
+    context["teams"] = teams
     context["general_laps"] = dictfetchall(cursor)
     return render(request, 'results.html', context)
 

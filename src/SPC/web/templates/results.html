@@ -24,20 +24,48 @@
                        <table class="table table-striped table-advance table-hover">
                           <tbody>
                           <tr>
-                            <th>CZAS TARYFA</th>
-                            <th><i class="icon_profile"></i>LAP_ID</th>
-                            <th><i class="icon_profile"></i>TEAM_ID</th>
+                            <th>Wynik taryfa </th>
+                            <th><i class="icon_profile"></i>Team</th>
                               <th></i> Numer startowy</th>
-                              <th></i> TARYFA</th>
-                              <th></i> KARA</th>
-                              <th></i> WYNIK</th>
-                              <th></i> WYNIK+KARA</th>
-                              <th></i> WYNIK(TARYFA bądź WYNIK+KARA)</th>
+                              <th></i> Taryfa</th>
+                              <th></i> Kara</th>
+                              <th></i> Wynik</th>
+                              <th></i> Wynik+kara</th>
+                              <th></i> Wynik końcowy</th>
                           </tr>
                           {% for lap in general_laps %}
                             <tr>
                                 {% for label, value in lap.items %}
-                                <td>{{label}}: {{value}}</td>
+                                    {% if label != "LAP_ID" %}
+                                            {% if label == "taryfa" %}
+                                                {% if value == True %}
+                                                    <td><span class="badge badge-danger">Tak</span></td>
+                                                {% else %}
+                                                    <td>-</td>
+                                                {% endif %}
+                                            {% elif label == "TEAM_ID" %}
+                                                    <td>{{value}}</td>
+                                            {% elif label == "fee" %}
+                                                <td>{{value}} s</td>
+                                            {% elif label == "MIN_RESULT" %}
+                                                <td>{{value}} ms</td>
+                                            {% elif label == "RESULT_WITH_FEE" %}
+                                                <td>{{value}} ms</td>
+                                            {% elif label == "OVERALL_TIME" %}
+                                                <td>{{value}} ms</td>
+                                            {% elif label == "TARYFA_TIME" %}
+                                                {% if value == 0.0 %}
+                                                    <td>-</td>
+                                                {% else %}
+                                                    <td>{{value}} ms</td>
+                                                {% endif %}
+                                            {% else %}
+                                                <td>{{value}}</td>
+                                            {% endif %}
+
+
+
+                                    {% endif %}
                                 {% endfor%}
                             </tr>
                           {% endfor%}
