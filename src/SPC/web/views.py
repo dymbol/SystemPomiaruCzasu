@@ -204,7 +204,9 @@ def save_result(request, team_id, track_id, _result, _fee, _taryfa):
             team=Team.objects.filter(id=team_id)[0],
             track=Track.objects.filter(id=track_id)[0],
             fee=abs(_fee),
-            result=abs(_result)
+            result=abs(_result),
+            result_plus_fee=abs(_result)+(abs(_fee)*1000),
+            result_taryfa = 0
         )
         if _taryfa == 1:
             new_lap.taryfa = True

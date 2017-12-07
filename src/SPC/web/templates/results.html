@@ -111,7 +111,9 @@
                                             {% elif label == "TEAM_ID" %}
                                                     <td>{{value|GetTeamName}}</td>
                                                             {% for element in value|GetTeamLaps%}
-                                                            <td >{{element}}</td>
+                                                            <td >
+                                                                {{element}}
+                                                            </td>
                                                             {% endfor %}
 
 

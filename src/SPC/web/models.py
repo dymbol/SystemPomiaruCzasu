@@ -121,6 +121,8 @@ class Lap(models.Model):
     start_time = models.TimeField(blank=True, null=True)
     stop_time = models.TimeField(blank=True, null=True)
     result = models.BigIntegerField()  #result in milliseconds
+    result_plus_fee = models.BigIntegerField()
+    result_taryfa = models.BigIntegerField()
 
     def __str__(self):
         return "{}, {}".format(self.track, self.team)
