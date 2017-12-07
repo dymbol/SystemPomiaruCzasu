@@ -13,7 +13,8 @@ from django.db import connections
 def index(request):
     context = {}
     context["races"] = Race.objects.all()  # .dates('creation_date', 'year').distinct()
-    context["chosen_race_id"] = request.session['chosen_race_id']       # get the id of chosen race
+    if "chosen_race_id" in context.keys():
+        context["chosen_race_id"] = request.session['chosen_race_id']       # get the id of chosen race
     return render(request, 'index.html', context)
 
 
@@ -33,6 +34,8 @@ def choose_race(request, race_id=None):
 
 
 def team_list(request):
+    if "chosen_race_id" not in request.session.keys():
+        return redirect('index')
     context = {}
     context["teams"] = Team.objects.filter(race__id=request.session['chosen_race_id'])
     return render(request, 'teams.html', context)
@@ -47,6 +50,9 @@ def dictfetchall(cursor):
     ]
 
 def results(request):
+    if "chosen_race_id" not in request.session.keys():
+        return redirect('index')
+
     cursor = connections['default'].cursor()
     context = {}
     context["classes_laps"]=[]
@@ -112,10 +118,13 @@ def results(request):
 
     context["teams"] = teams
     context["general_laps"] = dictfetchall(cursor)
+    context["race_laps"] = Track.objects.filter(race__id=request.session['chosen_race_id'])
     return render(request, 'results.html', context)
 
 
 def register_result(request):
+    if "chosen_race_id" not in request.session.keys():
+        return redirect('index')
     context = {}
     Teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
     last_laps = []

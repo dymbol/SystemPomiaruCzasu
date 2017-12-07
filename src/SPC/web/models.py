@@ -18,7 +18,6 @@ class Race(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     finished = models.BooleanField(default=False)   # True id Race is finished
-    current_loop = models.DecimalField(default=0, decimal_places=0, max_digits=9)
     race_type_choices = (
         ('TimeAttack', 'TimeAttack'),
         ('ShorthestSum', 'ShorthestSum')
@@ -29,7 +28,6 @@ class Race(models.Model):
         default='TimeAttack',
         max_length=24
     )
-    loop_count = models.DecimalField(decimal_places=0, max_digits=9)     # how many loops are on race
 
     def __str__(self):
         return self.name
@@ -112,7 +110,7 @@ class Track(models.Model):
     name = models.CharField(max_length=24)
 
     def __str__(self):
-        return self.name
+        return self.race.name+"-"+self.name
 
 
 class Lap(models.Model):

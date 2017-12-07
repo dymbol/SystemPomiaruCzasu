@@ -42,6 +42,14 @@
       <!--logo start-->
       <a href="{% url 'index' %}" class="logo">SYSTEM POMIARU CZASU<span class="lite"> - {{ request.session.chosen_race_name}}</span></a>
       <!--logo end-->
+      <div class="top-nav notification-row">
+        <!-- notificatoin dropdown start-->
+        <ul class="nav pull-right top-menu">
+
+         <span><a href="{% url 'admin:index' %}">admin</a></span>
+
+        </ul>
+        <!-- notificatoin dropdown end-->
 
       <div class="nav search-row" id="top_menu">
 
