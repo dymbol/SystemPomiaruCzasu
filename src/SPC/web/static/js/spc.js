@@ -96,7 +96,7 @@
     function send_result(team_id, track_id, loop)
     {
         $.get( "/save_result/"+team_id+"/"+track_id+"/"+TimeDiff+"/"+fee+"/"+taryfa, function( data ) {
-            $( "#send_result_info" ).text( data["status"] );
+            $( "#send_result_info" ).html( '<span class="badge badge-danger">'+data["status"]+'</span>' );
 
             jQuery.each(data["msg"], function() {
              //console.log(this);
@@ -105,7 +105,7 @@
                 )
             });
 
-            if (data["status"] == "ok") {
+            if (data["status"] == 'ok') {
                 alert( "Wynik został zapisany" );
             }else{
                 alert( "Błąd zapisu wyniku" );

@@ -94,6 +94,7 @@ def results(request):
             GROUP BY l.team_id
             ORDER BY  OVERALL_TIME
         '''.format(max_result.result, max_result.result,max_result.result,klasa[0])    # pass carclass id to query
+
         cursor.execute(query_result_by_class)
 
         # create list with carclasses names (used in template)
