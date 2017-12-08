@@ -34,7 +34,7 @@
                                       <tbody>
                                       <tr>
                                         <th>Pozycja</th>
-                                        <th>Wynik taryfa </th>
+                                        <!--<th>Wynik taryfa </th>-->
                                         <th><i class="icon_profile"></i>Team</th>
                                           <th> Numer startowy</th>
                                           <th> Taryfa</th>
@@ -65,11 +65,7 @@
                                                             {% elif label == "OVERALL_TIME" %}
                                                                 <td>{{value|msToHumanTime}}</td>
                                                             {% elif label == "TARYFA_TIME" %}
-                                                                {% if value == 0.0 %}
-                                                                    <td>-</td>
-                                                                {% else %}
-                                                                    <td>{{value}} ms</td>
-                                                                {% endif %}
+                                                                <!-- Pomijamy pisanie czasu taryfy-->
                                                             {% else %}
                                                                 <td>{{value}}</td>
                                                             {% endif %}
@@ -87,7 +83,7 @@
                           <tbody>
                           <tr>
                                         <th>Pozycja</th>
-                            <th>Wynik taryfa </th>
+                            <!--<th>Wynik taryfa </th>-->
                             <th><i class="icon_profile"></i>Team</th>
 
                               {% for race_lap in race_laps%}
@@ -133,11 +129,7 @@
                                             {% elif label == "OVERALL_TIME" %}
                                                 <td>{{value|msToHumanTime}}</td>
                                             {% elif label == "TARYFA_TIME" %}
-                                                {% if value == 0.0 %}
-                                                    <td>-</td>
-                                                {% else %}
-                                                    <td>{{value|msToHumanTime}}</td>
-                                                {% endif %}
+                                                <!-- Pomijamy pisanie czasu taryfy-->
                                             {% else %}
                                                 <td>{{value}}</td>
                                             {% endif %}
