@@ -48,7 +48,6 @@ def dictfetchall(cursor):
     ]
 
 def results(request):
-    max_result=0
     if "chosen_race_id" not in request.session.keys():
         return redirect('index')
 
@@ -66,7 +65,7 @@ def results(request):
     try:
         max_result = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('-result')[0]   # worst result
     except:
-        print("Not any lap registered")
+        return redirect('index')
 
     # ////// classes results //////
     # get only classes wich are used in this race
