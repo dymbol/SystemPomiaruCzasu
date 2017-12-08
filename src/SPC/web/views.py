@@ -15,7 +15,7 @@ def index(request):
         context["chosen_race_id"] = request.session['chosen_race_id']       # get the id of chosen race
     return render(request, 'index.html', context)
 
-@login_required
+
 def choose_race(request, race_id=None):
     '''
 
