@@ -48,6 +48,7 @@ def dictfetchall(cursor):
     ]
 
 def results(request):
+    max_result=0
     if "chosen_race_id" not in request.session.keys():
         return redirect('index')
 
