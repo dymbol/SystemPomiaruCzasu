@@ -34,41 +34,32 @@
                                       <tbody>
                                       <tr>
                                         <th>Pozycja</th>
-                                        <!--<th>Wynik taryfa </th>-->
-                                        <th><i class="icon_profile"></i>Team</th>
-                                          <th> Numer startowy</th>
-                                          <th> Taryfa</th>
-                                          <th> Kara</th>
-                                          <th> Najlepszy Wynik [min:s:ms]</th>
-                                          <th> Najlepszy Wynik+kara [min:s:ms]</th>
-                                          <th> Wynik końcowy [min:s:ms]</th>
+                                            <th></i> Numer startowy</th>
+                                            <th><i class="icon_profile"></i>Team</th>
+                                            {% for race_lap in race_laps%}
+                                                <th>{{race_lap.name}}</th>
+                                            {% endfor%}
+                                            <th></i> Najlepszy  Wynik [min:s:ms]</th>
                                       </tr>
                                             {% for el2 in data %}
                                                 <tr>
                                                 <td>{{forloop.counter}}</td>
                                                 {% for label, value in el2.items %}
                                                     {% if label != "LAP_ID" %}
-                                                            {% if label == "taryfa" %}
-                                                                {% if value == True %}
-                                                                    <td><span class="badge badge-danger">Tak</span></td>
-                                                                {% else %}
-                                                                    <td>-</td>
-                                                                {% endif %}
-                                                            {% elif label == "TEAM_ID" %}
-                                                                    <td>{{value|GetTeamName}}</td>
-                                                            {% elif label == "fee" %}
-                                                                <td>{{value}} s</td>
-                                                            {% elif label == "MIN_RESULT" %}
+                                                         {% if label == "start_no" %}
+                                                            <td>{{value}}</td>
+                                                        {% elif label == "TEAM_ID" %}
+                                                            <td>{{value|GetTeamName}}</td>
+                                                            {% for element in value|GetTeamLaps%}
+                                                                <td>
+                                                                {{element}}
+                                                                </td>
+                                                            {% endfor %}
+                                                        {% elif label == "MIN_RESULT" %}
                                                                 <td>{{value|msToHumanTime}}</td>
-                                                            {% elif label == "RESULT_WITH_FEE" %}
-                                                                <td>{{value|msToHumanTime}}</td>
-                                                            {% elif label == "OVERALL_TIME" %}
-                                                                <td>{{value|msToHumanTime}}</td>
-                                                            {% elif label == "TARYFA_TIME" %}
-                                                                <!-- Pomijamy pisanie czasu taryfy-->
-                                                            {% else %}
-                                                                <td>{{value}}</td>
-                                                            {% endif %}
+                                                        {% elif label == "OVERALL_TIME" %}
+                                                                <!-- ommit this value because it's the same as MIN_RESULT -->
+                                                        {% endif %}
                                                     {% endif %}
                                                 {% endfor %}
                                                 </tr>
@@ -82,60 +73,34 @@
                        <table class="table table-striped table-advance table-hover">
                           <tbody>
                           <tr>
-                                        <th>Pozycja</th>
-                            <!--<th>Wynik taryfa </th>-->
+                            <th>Pozycja</th>
+                            <th></i> Numer startowy</th>
                             <th><i class="icon_profile"></i>Team</th>
-
-                              {% for race_lap in race_laps%}
+                            {% for race_lap in race_laps%}
                                 <th>{{race_lap.name}}</th>
-                              {% endfor%}
-                              <th></i> Numer startowy</th>
-                              <th></i> Taryfa</th>
-                              <th></i> Kara</th>
-                              <th></i> Najlepszy  Wynik [min:s:ms]</th>
-                              <th></i> Najlepszy  Wynik+kara [min:s:ms]</th>
-                              <th></i> Wynik końcowy [min:s:ms]</th>
+                            {% endfor%}
+                            <th></i> Najlepszy  Wynik [min:s:ms]</th>
                           </tr>
                           {% for lap in general_laps %}
 
                             <tr>
                             <td>{{forloop.counter}}</td>
                                 {% for label, value in lap.items %}
-
                                     {% if label != "LAP_ID" %}
-
-                                            {% if label == "taryfa" %}
-                                                {% if value == True %}
-                                                    <td><span class="badge badge-danger">Tak</span></td>
-                                                {% else %}
-                                                    <td>-</td>
-                                                {% endif %}
-                                            {% elif label == "TEAM_ID" %}
-                                                    <td>{{value|GetTeamName}}</td>
-                                                            {% for element in value|GetTeamLaps%}
-                                                            <td >
-                                                                {{element}}
-                                                            </td>
-                                                            {% endfor %}
-
-
-
-                                            {% elif label == "fee" %}
-                                                <td>{{value}} s</td>
-                                            {% elif label == "MIN_RESULT" %}
+                                        {% if label == "start_no" %}
+                                            <td>{{value}}</td>
+                                        {% elif label == "TEAM_ID" %}
+                                            <td>{{value|GetTeamName}}</td>
+                                            {% for element in value|GetTeamLaps%}
+                                                <td>
+                                                {{element}}
+                                                </td>
+                                            {% endfor %}
+                                        {% elif label == "MIN_RESULT" %}
                                                 <td>{{value|msToHumanTime}}</td>
-                                            {% elif label == "RESULT_WITH_FEE" %}
-                                                <td>{{value|msToHumanTime}}</td>
-                                            {% elif label == "OVERALL_TIME" %}
-                                                <td>{{value|msToHumanTime}}</td>
-                                            {% elif label == "TARYFA_TIME" %}
-                                                <!-- Pomijamy pisanie czasu taryfy-->
-                                            {% else %}
-                                                <td>{{value}}</td>
-                                            {% endif %}
-
-
-
+                                        {% elif label == "OVERALL_TIME" %}
+                                                <!-- ommit this value because it's the same as MIN_RESULT -->
+                                        {% endif %}
                                     {% endif %}
                                 {% endfor%}
                             </tr>

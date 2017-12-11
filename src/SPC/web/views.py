@@ -82,18 +82,18 @@ def results(request):
 
 
         query_result_by_class='''
-            SELECT (l.taryfa*1.5*{0}) AS TARYFA_TIME, l.id LAP_ID, team.id as TEAM_ID, team.start_no, l.taryfa, l.fee, MIN(l.result) AS MIN_RESULT, (l.result+(l.fee*1000)) AS RESULT_WITH_FEE,
-            CASE WHEN (l.taryfa*1.5*{1}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{2}) END AS OVERALL_TIME
-            from web_lap l 
-            JOIN web_track track ON l.track_id=track.id 
-            JOIN web_team team ON l.team_id=team.id 
-            JOIN web_person person ON team.driver_id=person.id 
-            WHERE track.race_id=1 
-            AND  team.tclass_id={3}
-            AND l.taryfa=0 
-            GROUP BY l.team_id
-            ORDER BY  OVERALL_TIME
-        '''.format(max_result.result, max_result.result,max_result.result,klasa[0])    # pass carclass id to query
+            SELECT  team.start_no, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT,
+                    CASE WHEN (l.taryfa*1.5*{0}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{1}) END AS OVERALL_TIME
+                    from web_lap l 
+                    JOIN web_track track ON l.track_id=track.id 
+                    JOIN web_team team ON l.team_id=team.id 
+                    JOIN web_person person ON team.driver_id=person.id 
+                    WHERE track.race_id={2} 
+                    AND  team.tclass_id={3}
+                    AND l.taryfa=0 
+                    GROUP BY l.team_id
+                    ORDER BY  OVERALL_TIME
+        '''.format(max_result.result, max_result.result, request.session['chosen_race_id'], klasa[0])    # pass carclass id to query
 
         cursor.execute(query_result_by_class)
 
@@ -105,17 +105,17 @@ def results(request):
     # fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
 
     query = '''
-        SELECT (l.taryfa*1.5*{0}) AS TARYFA_TIME, l.id LAP_ID, team.id as TEAM_ID, team.start_no, l.taryfa, l.fee, MIN(l.result) AS MIN_RESULT, (l.result+(l.fee*1000)) AS RESULT_WITH_FEE,
-        CASE WHEN (l.taryfa*1.5*{1}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{2}) END AS OVERALL_TIME
+        SELECT  team.start_no, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT,
+        CASE WHEN (l.taryfa*1.5*{0}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{1}) END AS OVERALL_TIME
         from web_lap l
         JOIN web_track track ON l.track_id=track.id
         JOIN web_team team ON l.team_id=team.id
         JOIN web_person person ON team.driver_id=person.id
-        WHERE track.race_id=1
+        WHERE track.race_id={2}
         AND l.taryfa=0
         GROUP BY l.team_id
         ORDER BY  OVERALL_TIME
-    '''.format(max_result.result,max_result.result,max_result.result)
+    '''.format(max_result.result, max_result.result, request.session['chosen_race_id'])
     cursor.execute(query)
     # import pprint
     # pp = pprint.PrettyPrinter(indent=4)
