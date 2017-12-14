@@ -39,9 +39,9 @@
         - zlib-devel
         - gcc
         - redhat-rpm-config
-        - python2-devel
         - ffmpeg
         - git
+        - libmysqlclient-dev  
       when: ansible_distribution == "Centos" and ansible_distribution_major_version > '6'
 
 

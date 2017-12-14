@@ -81,19 +81,25 @@ def results(request):
         # fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
 
 
+        # SQLITE CASE:
+        # CASE WHEN (l.taryfa*1.5*{0}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{1}) END AS OVERALL_TIME
+
+        #MYSQL CASE:
+        # CASE l.taryfa WHEN 1 THEN(l.taryfa * 1.5 * {0}) ELSE (l.result + (l.fee * 1000)) END AS OVERALL_TIME
+
         query_result_by_class='''
             SELECT  team.start_no, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT,
-                    CASE WHEN (l.taryfa*1.5*{0}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{1}) END AS OVERALL_TIME
+                    CASE l.taryfa WHEN 1 THEN(l.taryfa * 1.5 * {0}) ELSE (l.result + (l.fee * 1000)) END AS OVERALL_TIME
                     from web_lap l 
                     JOIN web_track track ON l.track_id=track.id 
                     JOIN web_team team ON l.team_id=team.id 
                     JOIN web_person person ON team.driver_id=person.id 
-                    WHERE track.race_id={2} 
-                    AND  team.tclass_id={3}
+                    WHERE track.race_id={1} 
+                    AND  team.tclass_id={2}
                     AND l.taryfa=0 
                     GROUP BY l.team_id
                     ORDER BY  OVERALL_TIME
-        '''.format(max_result.result, max_result.result, request.session['chosen_race_id'], klasa[0])    # pass carclass id to query
+        '''.format(max_result.result, request.session['chosen_race_id'], klasa[0])    # pass carclass id to query
 
         cursor.execute(query_result_by_class)
 
@@ -106,7 +112,7 @@ def results(request):
 
     query = '''
         SELECT  team.start_no, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT,
-        CASE WHEN (l.taryfa*1.5*{0}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{1}) END AS OVERALL_TIME
+        CASE l.taryfa WHEN 1 THEN(l.taryfa * 1.5 * {0}) ELSE (l.result + (l.fee * 1000)) END AS OVERALL_TIME
         from web_lap l
         JOIN web_track track ON l.track_id=track.id
         JOIN web_team team ON l.team_id=team.id
