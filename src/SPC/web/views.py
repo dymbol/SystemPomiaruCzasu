@@ -16,6 +16,15 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+
+def race_list(request):
+    context = {}
+    context["races"] = Race.objects.all()  # .dates('creation_date', 'year').distinct()
+    if "chosen_race_id" in context.keys():
+        context["chosen_race_id"] = request.session['chosen_race_id']       # get the id of chosen race
+    return render(request, 'race_list.html', context)
+
+
 def choose_race(request, race_id=None):
     '''
 
@@ -28,7 +37,7 @@ def choose_race(request, race_id=None):
         request.session['chosen_race_name'] = Race.objects.filter(id=race_id)[0].name
     else:
         print("Lack of race with id: {}").format(race_id)
-    return redirect('index')
+    return redirect('results')
 
 
 def team_list(request):
@@ -88,18 +97,17 @@ def results(request):
         # CASE l.taryfa WHEN 1 THEN(l.taryfa * 1.5 * {0}) ELSE (l.result + (l.fee * 1000)) END AS OVERALL_TIME
 
         query_result_by_class='''
-            SELECT  team.start_no, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT,
-                    CASE l.taryfa WHEN 1 THEN(l.taryfa * 1.5 * {0}) ELSE (l.result + (l.fee * 1000)) END AS OVERALL_TIME
-                    from web_lap l 
-                    JOIN web_track track ON l.track_id=track.id 
-                    JOIN web_team team ON l.team_id=team.id 
-                    JOIN web_person person ON team.driver_id=person.id 
-                    WHERE track.race_id={1} 
-                    AND  team.tclass_id={2}
+            SELECT  team.start_no, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT
+                    from web_lap l
+                    JOIN web_track track ON l.track_id=track.id
+                    JOIN web_team team ON l.team_id=team.id
+                    JOIN web_person person ON team.driver_id=person.id
+                    WHERE track.race_id={0}
+                    AND  team.tclass_id={1}
                     AND l.taryfa=0 
                     GROUP BY l.team_id
-                    ORDER BY  OVERALL_TIME
-        '''.format(max_result.result, request.session['chosen_race_id'], klasa[0])    # pass carclass id to query
+                    ORDER BY  MIN_RESULT
+        '''.format(request.session['chosen_race_id'], klasa[0])    # pass carclass id to query
 
         cursor.execute(query_result_by_class)
 
@@ -111,21 +119,20 @@ def results(request):
     # fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
 
     query = '''
-        SELECT  team.start_no, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT,
-        CASE l.taryfa WHEN 1 THEN(l.taryfa * 1.5 * {0}) ELSE (l.result + (l.fee * 1000)) END AS OVERALL_TIME
+        SELECT  team.start_no, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT
         from web_lap l
         JOIN web_track track ON l.track_id=track.id
         JOIN web_team team ON l.team_id=team.id
         JOIN web_person person ON team.driver_id=person.id
-        WHERE track.race_id={2}
+        WHERE track.race_id={0}
         AND l.taryfa=0
         GROUP BY l.team_id
-        ORDER BY  OVERALL_TIME
-    '''.format(max_result.result, max_result.result, request.session['chosen_race_id'])
+        ORDER BY  MIN_RESULT
+    '''.format(request.session['chosen_race_id'])
     cursor.execute(query)
-    # import pprint
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(dictfetchall(cursor))
+    import pprint
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(dictfetchall(cursor))
 
     context["teams"] = teams
     context["general_laps"] = dictfetchall(cursor)

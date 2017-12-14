@@ -2,9 +2,7 @@
 {% load spc_extratags %}
 {% load static from staticfiles %}
 {% block primary %}
-<div class="row">
-    <section id="main-content">
-      <section class="wrapper">
+<div class="row my-4">
       <div class="col-lg-12">
 
 
@@ -57,7 +55,7 @@
                                                             {% endfor %}
                                                         {% elif label == "MIN_RESULT" %}
                                                                 <td>{{value|msToHumanTime}}</td>
-                                                        {% elif label == "OVERALL_TIME" %}
+                                                        {% elif label == "MIN_RESULT" %}
                                                                 <!-- ommit this value because it's the same as MIN_RESULT -->
                                                         {% endif %}
                                                     {% endif %}
@@ -98,8 +96,6 @@
                                             {% endfor %}
                                         {% elif label == "MIN_RESULT" %}
                                                 <td>{{value|msToHumanTime}}</td>
-                                        {% elif label == "OVERALL_TIME" %}
-                                                <!-- ommit this value because it's the same as MIN_RESULT -->
                                         {% endif %}
                                     {% endif %}
                                 {% endfor%}
@@ -117,8 +113,6 @@
 
 
       </div>
-      </section>
-        </section>
 
     </div>
 {% endblock %}

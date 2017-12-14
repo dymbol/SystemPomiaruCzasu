@@ -33,7 +33,7 @@ def GetTeamName(value):
 
 @register.filter
 def msToHumanTime(value):
-    """Chnages millisecond to format M:S:m"""
+    """Chanages millisecond to format M:S:m"""
     if type(value) is int:
         my_time = datetime.datetime.fromtimestamp(value / 1000.0)
         return "{}:{}:{}".format(my_time.minute, my_time.second, int(my_time.microsecond/1000))
