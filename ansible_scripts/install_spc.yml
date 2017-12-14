@@ -24,24 +24,13 @@
         state: present
       with_items:
         - jbigkit-libs
-        - lcms2
-        - lcms2-devel
-        - libimagequant
-        - libjpeg-turbo
-        - libjpeg-turbo-devel
-        - libtiff
-        - libtiff-devel
-        - libwebp
-        - openjpeg2
-        - openjpeg2-devel
         - python2-olefile
         - zlib
         - zlib-devel
         - gcc
         - redhat-rpm-config
-        - ffmpeg
         - git
-        - libmysqlclient-dev  
+        - mysql-devel
       when: ansible_distribution == "Centos" and ansible_distribution_major_version > '6'
 
 

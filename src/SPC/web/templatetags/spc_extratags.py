@@ -51,7 +51,6 @@ def GetTeamLaps(value):
 
 
     for track in tracks:
-        print(track.id)
         lap = Lap.objects.filter(track__id=track.id, team=value)
         if lap.exists():
             Kary = ""
@@ -69,7 +68,7 @@ def GetTeamLaps(value):
     #if no lap at track insert "-" value
     for track_no in range(len(tracks)):
         try:
-            print(results[track_no])
+            type(results[track_no])
         except:
             results.append("-")
 
