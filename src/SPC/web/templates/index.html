@@ -5,13 +5,13 @@
   <!-- Heading Row -->
   <div class="row my-4">
     <div class="col-lg-8">
-      <img class="img-fluid rounded" src="http://placehold.it/900x400" alt="">
+      <img class="img-fluid rounded" src="{% static 'img/bmw.jpg' %}" alt="">
     </div>
     <!-- /.col-lg-8 -->
     <div class="col-lg-4">
-      <h1>Business Name or Tagline</h1>
-      <p>This is a template that is great for small businesses. It doesn't have too much fancy flare to it, but it makes a great use of the standard Bootstrap core components. Feel free to use this template for any project you want!</p>
-      <a class="btn btn-primary btn-lg" href="#">Call to Action!</a>
+      <h1>SystemPomiaruCzasu</h1>
+      <p>System stworzony do pomiaru czasu przejazdów na imprezach typu KJS. Pomysł stworzenia aplikajci narodził się na torze treningowym w Rusocinie</p>
+      <a class="btn btn-primary btn-lg" href="{% url 'race_list' %}">Zobacz Imprezy!</a>
     </div>
     <!-- /.col-md-4 -->
   </div>
@@ -20,7 +20,7 @@
   <!-- Call to Action Well -->
   <div class="card text-white bg-secondary my-4 text-center">
     <div class="card-body">
-      <p class="text-white m-0">This call to action card is a great place to showcase some important information or display a clever tagline!</p>
+      <p class="text-white m-0">System jest ciągle w wersji testowej. Uwagi proszę zgłaszać mailowo: dymbol.linux_at_gmail.com</p>
     </div>
   </div>
 
@@ -29,11 +29,11 @@
     <div class="col-md-4 mb-4">
       <div class="card h-100">
         <div class="card-body">
-          <h2 class="card-title">Card One</h2>
-          <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus quam molestias corporis quod, ea minima accusamus.</p>
+          <h2 class="card-title">Rejestr wyników</h2>
+          <p class="card-text">Obserwuj na bierząco zmagania załóg!</p>
         </div>
         <div class="card-footer">
-          <a href="#" class="btn btn-primary">More Info</a>
+          <a href="{% url 'results' %}" class="btn btn-primary">Wyniki</a>
         </div>
       </div>
     </div>
@@ -41,11 +41,11 @@
     <div class="col-md-4 mb-4">
       <div class="card h-100">
         <div class="card-body">
-          <h2 class="card-title">Card Two</h2>
-          <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod tenetur ex natus at dolorem enim! Nesciunt pariatur voluptatem sunt quam eaque, vel, non in id dolore voluptates quos eligendi labore.</p>
+          <h2 class="card-title">Lista zawodników</h2>
+          <p class="card-text">Sprawdź listę zawodników na danej imprezie. Zobacz ich numer startowy, a także opis pojazdu jakim się porusza</p>
         </div>
         <div class="card-footer">
-          <a href="#" class="btn btn-primary">More Info</a>
+          <a href="{% url 'team_list' %}" class="btn btn-primary">Lista zawodników</a>
         </div>
       </div>
     </div>
@@ -53,8 +53,8 @@
     <div class="col-md-4 mb-4">
       <div class="card h-100">
         <div class="card-body">
-          <h2 class="card-title">Card Three</h2>
-          <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus quam molestias corporis quod, ea minima accusamus.</p>
+          <h2 class="card-title">Rejestrowanie</h2>
+          <p class="card-text"></p>
         </div>
         <div class="card-footer">
           <a href="#" class="btn btn-primary">More Info</a>

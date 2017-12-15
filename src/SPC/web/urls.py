@@ -9,7 +9,7 @@ urlpatterns = [
     path('team/list', views.team_list, name="team_list"),
     path('results', views.results, name="results"),
     path('result/register', views.register_result, name="register_result"),
-    path('race/<int:race_id>', views.race, name="race"),
+    path('change_track/<int:race_id>', views.change_track, name="change_track"),
     path('time_meter/<int:team_id>', views.time_meter, name="time_meter"),
     path('save_result/<int:team_id>/<int:track_id>/<int:_result>/<int:_fee>/<int:_taryfa>',
          views.save_result, name="save_result")

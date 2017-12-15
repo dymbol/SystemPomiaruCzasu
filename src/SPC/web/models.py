@@ -110,7 +110,7 @@ class Track(models.Model):
     name = models.CharField(max_length=24)
 
     def __str__(self):
-        return self.race.name+"-"+self.name
+        return self.name
 
 
 class Lap(models.Model):

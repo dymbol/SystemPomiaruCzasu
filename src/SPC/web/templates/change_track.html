@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+{% load bootstrap %}
+{% block primary %}
+<div class="row my-4">
+    <div class="col-lg-12">
+      <h2>Zmień trasę</h2>
+    </div>
+</div>
+  <div class="row my-4">
+      <div class="col-lg-12">
+            <form action="{% url 'change_track' race_id %}" method="post">
+                 {% csrf_token %}
+                 {{ form|bootstrap }}
+                <button type="submit" class="btn btn-primary">Zmień</button>
+            </form>
+
+
+
+
+      </div>
+      </div>
+
+
+{% endblock %}

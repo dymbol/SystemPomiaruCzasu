@@ -95,7 +95,7 @@
     function send_result(team_id, track_id, loop)
     {
         $.get( "/save_result/"+team_id+"/"+track_id+"/"+TimeDiff+"/"+fee+"/"+taryfa, function( data ) {
-            $( "#send_result_info" ).html( '<span class="badge badge-success">'+data["status"]+'</span>' );
+            $( "#send_result_info" ).html( '<span class="badge badge-info">'+data["status"]+'</span>' );
 
             jQuery.each(data["msg"], function() {
             SendAlert("danger",  this);

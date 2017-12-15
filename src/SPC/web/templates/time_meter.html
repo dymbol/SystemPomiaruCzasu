@@ -27,7 +27,7 @@
             </button>
             <p></p>
             <div class="btn-group" role="group" aria-label="Basic example">
-                <a class="btn btn-info " href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę <i
+                <a class="btn btn-info " href="{% url 'change_track' request.session.chosen_race_id %}">Zmień trasę/pętlę <i
                         class="fa fa-clock-o"></i></a>
                 <button class="btn btn-info " onclick="clear_measure()" type="button" id="btn_clear">Reset</button>
                 <button class="btn btn-info" onclick="add_fee()" type="button" id="btn_kara">Kara +5s</button>
@@ -46,7 +46,7 @@
                     <h3 class="h3">Aktualna trasa: <span class="badge badge-info font-weight-bold ">{{ request.session.current_track_name}}</span>
                     </h3>
                     <h3 class="h3">Zegar: <span class="h4" id="time_clock">-</span></h3>
-                    <h3 class="h3">Wynik [ms]: <span class="badge badge-success font-weight-bold "
+                    <h3 class="h3">Wynik: <span class="badge badge-success font-weight-bold "
                                                      id="result">     </span></h3>
                     <h3 class="h3">Kara [s]: <span class="badge badge-danger font-weight-bold" id="kara">       </span>
                     </h3>

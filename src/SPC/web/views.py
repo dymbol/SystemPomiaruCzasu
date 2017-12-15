@@ -8,6 +8,8 @@ from .forms import EditRace
 from django.http import JsonResponse
 from django.db import connections
 
+# TODO admin panel: filter teams by race, filter tracks by race etc
+
 def index(request):
     context = {}
     context["races"] = Race.objects.all()  # .dates('creation_date', 'year').distinct()
@@ -27,7 +29,6 @@ def race_list(request):
 
 def choose_race(request, race_id=None):
     '''
-
     :param request:
     :param race_id:
     :return: save id id of chosen race in that session
@@ -38,13 +39,16 @@ def choose_race(request, race_id=None):
     else:
         print("Lack of race with id: {}").format(race_id)
     return redirect('results')
+    # TODO return page with race information
 
 
 def team_list(request):
     if "chosen_race_id" not in request.session.keys():
-        return redirect('index')
+        return redirect('race_list')
+        # TODO add messaege: Wybierz wyścig z listy poniżej
     context = {}
     context["teams"] = Team.objects.filter(race__id=request.session['chosen_race_id']).order_by('start_no')
+    # TODO add page with info about every team
     return render(request, 'teams.html', context)
 
 
@@ -58,7 +62,8 @@ def dictfetchall(cursor):
 
 def results(request):
     if "chosen_race_id" not in request.session.keys():
-        return redirect('index')
+        return redirect('race_list')
+        # TODO add messaege: Wybierz wyścig z listy poniżej
 
     cursor = connections['default'].cursor()
     context = {}
@@ -130,13 +135,8 @@ def results(request):
         ORDER BY MIN_RESULT
     '''.format(request.session['chosen_race_id'])
     cursor.execute(query)
-    #import pprint
-    #pp = pprint.PrettyPrinter(indent=4)
-    #pp.pprint(dictfetchall(cursor))
-
     context["teams"] = teams
     context["general_laps"] = dictfetchall(cursor)
-    print(context["general_laps"])
     context["race_laps"] = Track.objects.filter(race__id=request.session['chosen_race_id'])
     return render(request, 'results.html', context)
 
@@ -171,7 +171,8 @@ def register_result(request):
 
 
 @login_required
-def race(request, race_id):
+def change_track(request, race_id):
+    print(request.META.get('HTTP_REFERER'))
     context = {}
 
     if request.method == 'POST':
@@ -183,14 +184,16 @@ def race(request, race_id):
     else:
         initial = {}
         if 'current_track_name' in request.session.keys():
-            initial['track'] = Track.objects.filter(id=request.session['current_track_id'])
+            initial['track'] = Track.objects.filter(name=request.session['current_track_name'])[0].id
+
         form = EditRace(
             race_id=race_id,
             initial=initial
         )
+        print(form['track'])
 
     # request.session['current_track'] =
-    return render(request, 'race.html', {'form': form, "race_id": race_id})
+    return render(request, 'change_track.html', {'form': form, "race_id": race_id})
 
 @login_required
 def time_meter(request, team_id):
