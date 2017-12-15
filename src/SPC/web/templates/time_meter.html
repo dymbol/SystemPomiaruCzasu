@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static from staticfiles %}
+{% load spc_extratags %}
 {% block primary %}
 <!--main content start-->
 <div class="row my-4">
@@ -38,7 +39,7 @@
 
             <div class="row my-4">
                 <div>
-                    <h3 class="h3">Załoga:</span> <span>{{ team.driver }}/{{ team.navigator }}</span></h3>
+                    <h3 class="h3">Załoga:</span> <span class="font-italic small">{{team.id|GetTeamName}}</span></h3>
                     <h3 class="h3">Nr załogi: <span
                             class="badge badge-warning font-weight-bold ">{{ team.start_no }}</span></h3>
 

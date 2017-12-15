@@ -50,7 +50,7 @@
             TimeDiff = EndTime - StartTime;
             MeasureMade = true;
             //console.log(TimeDiff);
-            $('#result').text(TimeDiff);
+            $('#result').text(MsToHuman(TimeDiff));
             $("#btn_stop").attr("disabled", true);
             SendAlert("success", "Pomiar wykonany" );
 
@@ -95,11 +95,10 @@
     function send_result(team_id, track_id, loop)
     {
         $.get( "/save_result/"+team_id+"/"+track_id+"/"+TimeDiff+"/"+fee+"/"+taryfa, function( data ) {
-            $( "#send_result_info" ).html( '<span class="badge badge-danger">'+data["status"]+'</span>' );
+            $( "#send_result_info" ).html( '<span class="badge badge-success">'+data["status"]+'</span>' );
 
             jQuery.each(data["msg"], function() {
-             //console.log(this);
-             SendAlert("danger",  this);
+            SendAlert("danger",  this);
             });
 
             if (data["status"] == 'ok') {
@@ -116,4 +115,11 @@
              $('#alerts').append(
                         '<div class=\"alert alert-'+level+'\" role=\"alert\"><h3>'+msg+'</h3></div>'
                     )
+    }
+
+    function MsToHuman(timeinms) {
+        min = Math.floor((timeinms/1000/60) << 0),
+        sec = Math.floor((timeinms/1000) % 60);
+        ms = timeinms - (min*1000*60) - (sec*1000)
+        return min+":"+sec+":"+ms
     }
