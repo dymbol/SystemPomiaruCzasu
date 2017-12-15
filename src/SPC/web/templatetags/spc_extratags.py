@@ -3,6 +3,7 @@ from django.template.defaultfilters import stringfilter
 from web.models import Team, Lap, Track, Race
 register = template.Library()
 import datetime
+from decimal import Decimal
 
 @register.filter
 def GetTeamName(value):
@@ -33,12 +34,16 @@ def GetTeamName(value):
 
 @register.filter
 def msToHumanTime(value):
-    """Chanages millisecond to format M:S:m"""
-    if type(value) is int:
+    """Changes millisecond to format M:S:m"""
+    if type(value) is int or type(value) is Decimal:
+
+        if type(value) is Decimal:
+            value = int(value)
+
         my_time = datetime.datetime.fromtimestamp(value / 1000.0)
-        return "{}:{}:{}".format(my_time.minute, my_time.second, int(my_time.microsecond/1000))
+        return "{}:{}:{}".format(my_time.minute, my_time.second, int(my_time.microsecond / 1000))
     else:
-        return "-"
+        return '-'
 
 
 @register.filter
@@ -60,7 +65,7 @@ def GetTeamLaps(value):
                 Kary = Kary+"(+"+str(lap[0].fee)+"s)"
             result = lap[0].result
         else:
-            result = "-"
+            result = '<i class="fa fa-minus-square" aria-hidden="true"></i>'
             Kary = ""
 
         results.append("{} {}".format(msToHumanTime(result), Kary))
@@ -70,6 +75,7 @@ def GetTeamLaps(value):
         try:
             type(results[track_no])
         except:
-            results.append("-")
+            results.append('-')
+
 
     return results

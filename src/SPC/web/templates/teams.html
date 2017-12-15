@@ -1,38 +1,39 @@
 {% extends 'base.html' %}
 {% load static from staticfiles %}
 {% block primary %}
+<div class="row my-4">
+    <div class="col-lg-12">
+      <h2>Lista zawodników</h2>
+    </div>
+</div>
   <div class="row my-4">
       <div class="col-lg-12">
-                <section class="panel">
-                  <header class="panel-heading">
-                    Lista zawodników
-                  </header>
-
-                  <table class="table table-striped table-advance table-hover">
-                    <tbody>
-                      <tr>
-                        <th><i class="icon_pin_alt"></i> Numer startowy</th>
-                        <th><i class="icon_profile"></i> Kierowca</th>
-                        <th><i class="icon_calendar"></i> Pilot</th>
-                        <th><i class="icon_calendar"></i> Samochód</th>
-                        <th><i class="icon_cogs"></i> Klasa</th>
-                      </tr>
-                      {% for team in teams %}
-                        <tr>
-                          <td>{{ team.start_no }}</td>
-                          <td>{{ team.driver }}</td>
-                          {% if  team.navigator == None %}
-                            <td>brak</td>
-                          {% else %}
-                            <td>{{ team.navigator }}</td>
-                          {% endif %}
-                          <td>{{ team.car }}</td>
-                          <td>{{ team.tclass }}</td>
-                        </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </section>
+          <table class="table table-striped table-advance table-hover">
+            <tbody>
+              <tr>
+                <th>Rejestruj czas</th>
+                <th> Nr</th>
+                <th><i class="icon_profile"></i> Kierowca</th>
+                <th><i class="icon_profile"></i> Pilot</th>
+                <th><i class="fa fa-car"></i> Samochód</th>
+                <th><i class="icon_cogs"></i> Klasa</th>
+              </tr>
+              {% for team in teams %}
+                <tr>
+                  <td><a class="btn btn-primary" href="{% url 'time_meter' team.id %}"><i class="fa fa-clock-o"></i></a></td>
+                  <td><h3><span class="badge badge-warning font-weight-bold ">{{ team.start_no }}</span></h3></td>
+                  <td>{{ team.driver }}</td>
+                  {% if  team.navigator == None %}
+                    <td>brak</td>
+                  {% else %}
+                    <td>{{ team.navigator }}</td>
+                  {% endif %}
+                  <td>{{ team.car }}</td>
+                  <td>{{ team.tclass }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
       </div>
 
     </div>
