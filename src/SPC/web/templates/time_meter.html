@@ -2,70 +2,66 @@
 {% load static from staticfiles %}
 {% block primary %}
 <!--main content start-->
-<section id="main-content">
-    <section class="wrapper">
-
-
-        <div class="row">
-            <div class="col-md-3" ></div>
-            <div class="col-md-6">
-
-                <div class="alert alert-success" role="alert">
-                    <span id="stoper_info">Gotowy do pomiaru</span>
-                </div>
-
-                <div id="alerts"></div>
-                <div><span class="h3">Team:</span> <span class="h4">{{ team.driver }}/{{ team.navigator }}</span></div>
-                <div><span class="h3">Aktualna trasa:</span> <span
-                        class="h4">{{ request.session.current_track_name}}</span></div>
-                <div><span class="h3">Aktualny czas: </span> <span class="h4" id="time_clock">-</span></div>
-                <div><span class="h3">Wynik [ms]:    </span> <span class="h4" id="result">     </span></div>
-                <div><span class="h3">Kara [s]:      </span> <span class="h4" id="kara">       </span></div>
-                <div><span class="h3">Taryfa:        </span> <span class="h4" id="taryfa">     </span></div>
-                <div><span class="h3">Status zapisu wyniku: </span> <span class="h4" id="send_result_info"></span></div>
-                <p></p>
-
-
-            </div>
-            <div class="col-md-3" ></div>
+<div class="row my-4">
+    <div class="col-lg-12">
+        <div id="alerts">
+            <div class="alert alert-info" role="alert"><h3>Gotowy do pomiaru</h3></div>
         </div>
-        <div class="row">
-            <div class="col-md-3" ></div>
-            <div class="col-md-6">
-
-
-                <button class="btn btn-success btn-lg btn-block" onclick="start_measure()" type="button" id="btn_start">
-                    Start
-                </button>
-                <button class="btn btn-danger btn-lg btn-block" onclick="stop_measure()" type="button" id="btn_stop">
-                    Stop
-                </button>
-                <button class="btn btn-primary btn-lg btn-block" onclick="send_result({{ team.id }},{{ request.session.current_track_id }},{{ request.session.current_loop}})" type="button" id="btn_send">
-                    Wyślij wynik
-                </button>
-                <p></p>
-                <div class="btn-group" role="group" aria-label="Basic example">
-                    <a class="btn btn-info " href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę <i
-                            class="fa fa-clock-o"></i></a>
-                    <button class="btn btn-info " onclick="clear_measure()" type="button" id="btn_clear">Reset</button>
-                    <button class="btn btn-info" onclick="add_fee()" type="button" id="btn_kara">Kara +5s</button>
-                    <button class="btn btn-info" onclick="add_taryfa()" type="button" id="btn_taryfa">Taryfa</button>
-                </div>
-
-
-                <div>
-
-                </div>
-            </div>
-            <div class="col-md-3" ></div>
-        </div>
-
-
-    </section>
-</section>
-<script src="{% static 'js/spc.js' %}"></script>
-
-
-
+    </div>
 </div>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-success btn-lg btn-block" onclick="start_measure()" type="button" id="btn_start">
+                Start
+            </button>
+            <button class="btn btn-danger btn-lg btn-block" onclick="stop_measure()" type="button" id="btn_stop">
+                Stop
+            </button>
+            <button class="btn btn-primary btn-lg btn-block"
+                    onclick="send_result({{ team.id }},{{ request.session.current_track_id }},{{ request.session.current_loop}})"
+                    type="button" id="btn_send">
+                Wyślij wynik
+            </button>
+            <p></p>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <a class="btn btn-info " href="{% url 'race' request.session.chosen_race_id %}">Zmień trasę/pętlę <i
+                        class="fa fa-clock-o"></i></a>
+                <button class="btn btn-info " onclick="clear_measure()" type="button" id="btn_clear">Reset</button>
+                <button class="btn btn-info" onclick="add_fee()" type="button" id="btn_kara">Kara +5s</button>
+                <button class="btn btn-info" onclick="add_taryfa()" type="button" id="btn_taryfa">Taryfa</button>
+            </div>
+        </div>
+        <div class="col">
+
+
+            <div class="row my-4">
+                <div>
+                    <h3 class="h3">Załoga:</span> <span>{{ team.driver }}/{{ team.navigator }}</span></h3>
+                    <h3 class="h3">Nr załogi: <span
+                            class="badge badge-warning font-weight-bold ">{{ team.start_no }}</span></h3>
+
+                    <h3 class="h3">Aktualna trasa: <span class="badge badge-info font-weight-bold ">{{ request.session.current_track_name}}</span>
+                    </h3>
+                    <h3 class="h3">Zegar: <span class="h4" id="time_clock">-</span></h3>
+                    <h3 class="h3">Wynik [ms]: <span class="badge badge-success font-weight-bold "
+                                                     id="result">     </span></h3>
+                    <h3 class="h3">Kara [s]: <span class="badge badge-danger font-weight-bold" id="kara">       </span>
+                    </h3>
+                    <h3 class="h3">Taryfa: <span class="badge badge-danger font-weight-bold" id="taryfa">     </span>
+                    </h3>
+                    <h3 class="h3">Status zapisu wyniku: <span class="h4" id="send_result_info"></span></h3>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script src="{% static 'js/spc.js' %}"></script>
 {% endblock %}

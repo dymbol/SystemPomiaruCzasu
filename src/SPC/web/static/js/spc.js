@@ -37,10 +37,8 @@
         {
             StartLock = true;
             StartTime = new Date();
-            //console.log(StartTime);
-
             $("#btn_start").attr("disabled", true);
-            $("#stoper_info").text("Pomiar w toku");
+            SendAlert("warning", "Pomiar w toku" );
         } else {console.log("Can't start")}
    };
 
@@ -54,7 +52,9 @@
             //console.log(TimeDiff);
             $('#result').text(TimeDiff);
             $("#btn_stop").attr("disabled", true);
-            $("#stoper_info").text("Pomiar wykonany");
+            SendAlert("success", "Pomiar wykonany" );
+
+
         } else {console.log("Measure already done!")}
 
 
@@ -76,8 +76,7 @@
     $('#result').text("-");
     $("#btn_start").attr("disabled", false);
     $("#btn_stop").attr("disabled", false);
-    $("#stoper_info").text("Gotowy do pomiaru");
-    $('#send_result_info').html("")
+    SendAlert("info", "Gotowy do pomiaru" );
    }
 
 
@@ -100,9 +99,7 @@
 
             jQuery.each(data["msg"], function() {
              //console.log(this);
-             $('#send_result_info').append(
-                    '<div class=\"alert alert-danger\" role=\"alert\">'+this+'</div>'
-                )
+             SendAlert("danger",  this);
             });
 
             if (data["status"] == 'ok') {
@@ -111,4 +108,12 @@
                 alert( "Błąd zapisu wyniku" );
             }
         });
+    }
+
+
+    function SendAlert(level, msg) {
+         $("#alerts").empty();
+             $('#alerts').append(
+                        '<div class=\"alert alert-'+level+'\" role=\"alert\"><h3>'+msg+'</h3></div>'
+                    )
     }
