@@ -4,6 +4,7 @@ from web.models import Team, Lap, Track, Race
 register = template.Library()
 import datetime
 from decimal import Decimal
+from django.conf import settings
 
 @register.filter
 def GetTeamName(value):
@@ -79,3 +80,8 @@ def GetTeamLaps(value):
 
 
     return results
+
+
+@register.simple_tag
+def GetGoogleAnalitycsConfig():
+    return settings.GACONFIG
