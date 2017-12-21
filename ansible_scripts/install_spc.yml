@@ -18,7 +18,7 @@
         - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
         - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
 
-    - name: Install required packages
+    - name: Install required Centos packages
       yum:
         name: "{{ item }}"
         state: present
@@ -34,15 +34,30 @@
       when: ansible_distribution == "Centos" and ansible_distribution_major_version > '6'
 
 
+    - name: Install required Debian packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - python3-dev
+        - python3-pip
+        - gcc
+        - git
+        - libsqlclient-dev
+      when: ansible_distribution == "Debian"
+
+
     - name: Disabling SELINUX
       selinux:
         state: disabled
+      when: ansible_distribution == "Centos" and ansible_distribution_major_version > '6'
 
     - name: disable firewalld
       systemd:
         name: firewalld
         enabled: no
         state: stopped
+      when: ansible_distribution == "Centos" and ansible_distribution_major_version > '6'
 
     - name: Creates SPC directory
       file: path="{{ SPC_dir }}" state=directory
