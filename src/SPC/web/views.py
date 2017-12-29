@@ -66,7 +66,7 @@ def results(request):
         # TODO add messaege: Wybierz wyścig z listy poniżej
 
     cursor = connections['default'].cursor()
-    context = {}
+    context={}
     context["classes_laps"]=[]
 
     teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
@@ -76,69 +76,103 @@ def results(request):
     # - podział na klasy
     # - najniższy wynik wygrywa
 
-    try:
-        max_result = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('-result')[0]   # worst result
-    except:
-        return redirect('index')
+    thisrace=Race.objects.filter(id=request.session['chosen_race_id'])[0]
 
-    # ////// classes results //////
-    # get only classes wich are used in this race
-    this_race_classes_query='''
-        SELECT team.tclass_id, klasa.name
-        FROM web_carclass klasa
-        JOIN web_team team ON team.tclass_id=klasa.id
-        WHERE team.race_id={}
-        GROUP BY team.tclass_id
-        '''.format(request.session['chosen_race_id'])
-    cursor.execute(this_race_classes_query)
-    for klasa in cursor.fetchall():
+    if thisrace.race_type == "TimeAttack":
+        try:
+            max_result = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('-result')[0]   # worst result
+        except:
+            return redirect('index')
+
+        # ////// classes results //////
+        # get only classes wich are used in this race
+        this_race_classes_query='''
+            SELECT team.tclass_id, klasa.name
+            FROM web_carclass klasa
+            JOIN web_team team ON team.tclass_id=klasa.id
+            WHERE team.race_id={}
+            GROUP BY team.tclass_id
+            '''.format(request.session['chosen_race_id'])
+        cursor.execute(this_race_classes_query)
+        for klasa in cursor.fetchall():
+            # fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
+
+
+            # SQLITE CASE:
+            # CASE WHEN (l.taryfa*1.5*{0}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{1}) END AS OVERALL_TIME
+
+            #MYSQL CASE:
+            # CASE l.taryfa WHEN 1 THEN(l.taryfa * 1.5 * {0}) ELSE (l.result + (l.fee * 1000)) END AS OVERALL_TIME
+
+            query_result_by_class='''
+                SELECT  team.start_no AS START_NO, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT
+                        from web_lap l
+                        JOIN web_track track ON l.track_id=track.id
+                        JOIN web_team team ON l.team_id=team.id
+                        JOIN web_person person ON team.driver_id=person.id
+                        WHERE track.race_id={0}
+                        AND  team.tclass_id={1}
+                        AND l.taryfa=0 
+                        GROUP BY l.team_id
+                        ORDER BY  MIN_RESULT
+            '''.format(request.session['chosen_race_id'], klasa[0])    # pass carclass id to query
+
+            cursor.execute(query_result_by_class)
+
+            # create list with carclasses names (used in template)
+            context["classes_laps"].append({klasa[1]: dictfetchall(cursor)})
+
+        # ////// general results //////
+
         # fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
 
-
-        # SQLITE CASE:
-        # CASE WHEN (l.taryfa*1.5*{0}) IS 0 THEN (l.result+(l.fee*1000)) ELSE (l.taryfa*1.5*{1}) END AS OVERALL_TIME
-
-        #MYSQL CASE:
-        # CASE l.taryfa WHEN 1 THEN(l.taryfa * 1.5 * {0}) ELSE (l.result + (l.fee * 1000)) END AS OVERALL_TIME
-
-        query_result_by_class='''
+        query = '''
             SELECT  team.start_no AS START_NO, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT
-                    from web_lap l
-                    JOIN web_track track ON l.track_id=track.id
-                    JOIN web_team team ON l.team_id=team.id
-                    JOIN web_person person ON team.driver_id=person.id
-                    WHERE track.race_id={0}
-                    AND  team.tclass_id={1}
-                    AND l.taryfa=0 
-                    GROUP BY l.team_id
-                    ORDER BY  MIN_RESULT
-        '''.format(request.session['chosen_race_id'], klasa[0])    # pass carclass id to query
+            from web_lap l
+            JOIN web_track track ON l.track_id=track.id
+            JOIN web_team team ON l.team_id=team.id
+            JOIN web_person person ON team.driver_id=person.id
+            WHERE track.race_id={0}
+            AND l.taryfa=0
+            GROUP BY l.team_id
+            ORDER BY MIN_RESULT
+        '''.format(request.session['chosen_race_id'])
+        cursor.execute(query)
+        context["teams"] = teams
+        context["general_laps"] = dictfetchall(cursor)
+        context["race_laps"] = Track.objects.filter(race__id=request.session['chosen_race_id'])
+        return render(request, 'results.html', context)
+    elif thisrace.race_type == "ShorthestSum":
+        print("fde")
 
-        cursor.execute(query_result_by_class)
+        '''
+        SET @race_id = 1;
+SET @klasa_id = 2;
 
-        # create list with carclasses names (used in template)
-        context["classes_laps"].append({klasa[1]: dictfetchall(cursor)})
-
-    # ////// general results //////
-
-    # fields: TARYFA_TIME, LAP_ID, TEAM_ID, START_NO, TARYFA, FEE, MIN_RESULT, RESULT_WITH_FEE, OVERALL_TIME
-
-    query = '''
-        SELECT  team.start_no AS START_NO, team.id as TEAM_ID, MIN(l.result+(l.fee*1000)) AS MIN_RESULT
+SELECT  team.START_NO,
+		team.id as TEAM_ID,
+        SUM(RESULT+(l.fee*1000)) AS SUMA,
+        IF (l.taryfa=0,RESULT=l.result, RESULT=1.5*(
+												SELECT  MIN(l.result+(l.fee*1000)) AS MIN_RESULT_PROBA
+													from web_lap l
+													JOIN web_track track ON l.track_id=track.id
+													JOIN web_team team ON l.team_id=team.id
+													JOIN web_person person ON team.driver_id=person.id
+													WHERE track.race_id=@race_id
+													AND  team.tclass_id=@klasa_id
+													AND l.taryfa=0 
+													AND track.id=track.id
+												))
+        
         from web_lap l
         JOIN web_track track ON l.track_id=track.id
         JOIN web_team team ON l.team_id=team.id
         JOIN web_person person ON team.driver_id=person.id
-        WHERE track.race_id={0}
-        AND l.taryfa=0
+        WHERE track.race_id=@race_id
+        AND  team.tclass_id=@klasa_id
         GROUP BY l.team_id
-        ORDER BY MIN_RESULT
-    '''.format(request.session['chosen_race_id'])
-    cursor.execute(query)
-    context["teams"] = teams
-    context["general_laps"] = dictfetchall(cursor)
-    context["race_laps"] = Track.objects.filter(race__id=request.session['chosen_race_id'])
-    return render(request, 'results.html', context)
+        ORDER BY  SUMA
+        '''
 
 
 @login_required
