@@ -155,14 +155,17 @@ def results(request):
 
         #general classification
         for team in this_race_teams:
+            '''
+                result of this loop:
+                [team_id, Decimal(SUM_OF_TIMES_OF_THIS_RACE)]
+            '''
+            team_id = team["team_id"]
             tmp_list = []
-            tmp_list.append(team)
+            tmp_list.append(team_id)
             final_sum = 0
             for lap in this_race_laps:
-                if team["team_id"] == lap.team.id:
-                    #print(lap)
-                    tmp_list.append(lap)
-                    final_sum = final_sum+lap.final_result
+                if team_id == lap.team.id:
+                    final_sum = final_sum+lap.final_result      # final_result is computed value from Lap model
 
             tmp_list.append(final_sum)
             gen_team_laps.append(tmp_list)
@@ -190,23 +193,12 @@ def results(request):
                     this_team_laps.append(final_sum)    # THIRD add SUM of times
                     klasa_tmp_list.append(this_team_laps)   # FOURTH ADD whole all this team laps to ceratin class
 
-            classes_team_laps[klasa_name]=sorted(klasa_tmp_list, key=itemgetter(-1)) # add sorted laps for certain klasa
+            classes_team_laps[klasa_name]=sorted(klasa_tmp_list, key=itemgetter(1)) # add sorted laps for certain klasa
 
-        context["general_laps"]=sorted(gen_team_laps, key=itemgetter(-1))       #sorting list by key
-        context["classes_laps"] = classes_team_laps
-        context["race_classes"] = this_race_classes
-        context["race_laps"] = Track.objects.filter(race__id=request.session['chosen_race_id'])
-
-        #
-        #query.group_by = ["team"]
-        #general_results = QuerySet(query=query, model=Lap)
-
-        #for lap in general_results:
-#            print(lap)
-
+        context["general_laps"]=sorted(gen_team_laps, key=itemgetter(1))       #laps for GENERAL CLASIFICATION
+        context["classes_laps"] = classes_team_laps                            #laps for KLASSES  CLASIFICATION divided on classes (dict)
+        context["race_tracks"] = Track.objects.filter(race__id=request.session['chosen_race_id'])   #list of tracks in this race
         return render(request, 'results_sum.html', context)
-
-
 
 
 @login_required

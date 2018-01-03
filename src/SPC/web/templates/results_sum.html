@@ -33,7 +33,7 @@
                             <th>Pozycja</th>
                             <th alt="Numer startowy"> Nr</th>
                             <th><i class="icon_profile"></i>Załoga</th>
-                            {% for race_lap in race_laps%}
+                            {% for race_lap in race_tracks%}
                             <th>{{race_lap.name}}</th>
                             {% endfor%}
                             <th></i> Suma</th>
@@ -41,9 +41,9 @@
                         {% for lap in general_laps %}
                         <tr>
                             <td>{{forloop.counter}}</td>
-                            <td ><span class="badge badge-warning">{{lap.0.team_id|GetTeamStartNo}}</span></td>
-                            <td >{{lap.0.team_id|GetTeamName}}</td>
-                            {% for element in lap.0.team_id|GetTeamLaps%}
+                            <td ><span class="badge badge-warning">{{lap.0|GetTeamStartNo}}</span></td>
+                            <td >{{lap.0|GetTeamName}}</td>
+                            {% for element in lap.0|GetTeamLaps%}
                             <td >
                                 {{element}}
                             </td>
@@ -67,7 +67,7 @@
                             <th>Pozycja</th>
                             <th alt="Numer startowy"> Nr</th>
                             <th><i class="icon_profile"></i>Załoga</th>
-                            {% for race_lap in race_laps%}
+                            {% for race_lap in race_tracks%}
                             <th>{{race_lap.name}}</th>
                             {% endfor%}
                             <th></i> Suma</th>
