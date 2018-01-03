@@ -149,7 +149,11 @@ def results(request):
         #get teams on that race
         this_race_teams = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by().values('team_id').distinct()
         this_race_laps = Lap.objects.filter(track__race__id=request.session['chosen_race_id'])
-        team_laps = []
+        this_race_classes = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by().values('team__tclass__name').distinct()
+        gen_team_laps = []
+
+
+        #general classification
         for team in this_race_teams:
             tmp_list = []
             tmp_list.append(team)
@@ -161,12 +165,37 @@ def results(request):
                     final_sum = final_sum+lap.final_result
 
             tmp_list.append(final_sum)
-            team_laps.append(tmp_list)
+            gen_team_laps.append(tmp_list)
 
-        context["general_laps"]=sorted(team_laps, key=itemgetter(-1))       #sorting list by key
+        # classes classification
+        classes_team_laps = {}
+        for klasa in this_race_classes:
+            klasa_name = klasa['team__tclass__name']
+            klasa_tmp_list = [] # for storing teams's laps per class
+            for team in this_race_teams:
+                '''
+                    result of this loop:
+                    [team_id, Decimal(SUM_OF_TIMES_OF_THIS_RACE)]
+                '''
+                team_id = team["team_id"]
+                team_obj = Team.objects.filter(id=team_id)[0]
+                if team_obj.tclass.name == klasa_name:  # PRE CHECK if team belongs to class
+                    this_team_laps = []
+                    final_sum = 0
+                    this_team_laps.append(team_id)  # FIRST add TEAM
 
+                    for lap in Lap.objects.filter(team=team_obj):   # SECOND compute SUM of times
+                        final_sum = final_sum + lap.final_result
+
+                    this_team_laps.append(final_sum)    # THIRD add SUM of times
+                    klasa_tmp_list.append(this_team_laps)   # FOURTH ADD whole all this team laps to ceratin class
+
+            classes_team_laps[klasa_name]=sorted(klasa_tmp_list, key=itemgetter(-1)) # add sorted laps for certain klasa
+
+        context["general_laps"]=sorted(gen_team_laps, key=itemgetter(-1))       #sorting list by key
+        context["classes_laps"] = classes_team_laps
+        context["race_classes"] = this_race_classes
         context["race_laps"] = Track.objects.filter(race__id=request.session['chosen_race_id'])
-        print(team_laps[1])
 
         #
         #query.group_by = ["team"]

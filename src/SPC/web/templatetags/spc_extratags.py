@@ -9,35 +9,37 @@ from django.conf import settings
 @register.filter
 def GetTeamName(value):
     """get Team Name by the given id"""
-    team = Team.objects.filter(id=value)
-    if team[0].driver.nick is None:
-        driver_nick = ""
-    else:
-        driver_nick = "({})".format(team[0].driver.nick)
-
-
-    if team[0].navigator is None:
-        team_name="{}.{} {}".format(team[0].driver.name[0], team[0].driver.surname, driver_nick)
-    else:
-        if team[0].navigator.nick is None:
-            nav_nick = ""
+    if type(value) is int:
+        team = Team.objects.filter(id=value)
+        if team[0].driver.nick is None:
+            driver_nick = ""
         else:
-            nav_nick = "({})".format(team[0].navigator.nick)
+            driver_nick = "({})".format(team[0].driver.nick)
 
-        team_name = "{}.{} {}/{}.{} {}".format(
-            team[0].driver.name[0],
-            team[0].driver.surname,
-            driver_nick,
-            team[0].navigator.name[0],
-            team[0].navigator.surname,
-            nav_nick)
-    return team_name
+
+        if team[0].navigator is None:
+            team_name="{}.{} {}".format(team[0].driver.name[0], team[0].driver.surname, driver_nick)
+        else:
+            if team[0].navigator.nick is None:
+                nav_nick = ""
+            else:
+                nav_nick = "({})".format(team[0].navigator.nick)
+
+            team_name = "{}.{} {}/{}.{} {}".format(
+                team[0].driver.name[0],
+                team[0].driver.surname,
+                driver_nick,
+                team[0].navigator.name[0],
+                team[0].navigator.surname,
+                nav_nick)
+        return team_name
 
 
 @register.filter
 def GetTeamStartNo(value):
-    team = Team.objects.filter(id=value)
-    return team[0].start_no
+    if type(value) is int:
+        team = Team.objects.filter(id=value)
+        return team[0].start_no
 
 
 
@@ -59,36 +61,37 @@ def msToHumanTime(value):
 @register.filter
 def GetTeamLaps(value):
     """get Team laps by the given team_id"""
-    results=[]
-    team = Team.objects.filter(id=value)
-    laps = Lap.objects.filter(team=value)
-    tracks = Track.objects.filter(race=team[0].race)
+    if type(value) is int:
+        results=[]
+        team = Team.objects.filter(id=value)
+        laps = Lap.objects.filter(team=value)
+        tracks = Track.objects.filter(race=team[0].race)
 
 
-    for track in tracks:
-        lap = Lap.objects.filter(track__id=track.id, team=value)
-        if lap.exists():
-            Kary = ""
-            if lap[0].taryfa is True:
-                Kary = Kary + "(T)"
-            if lap[0].fee > 0:
-                Kary = Kary+"(+"+str(lap[0].fee)+"s)"
-            result = lap[0].result
-        else:
-            result = '<i class="fa fa-minus-square" aria-hidden="true"></i>'
-            Kary = ""
+        for track in tracks:
+            lap = Lap.objects.filter(track__id=track.id, team=value)
+            if lap.exists():
+                Kary = ""
+                if lap[0].taryfa is True:
+                    Kary = Kary + "(T)"
+                if lap[0].fee > 0:
+                    Kary = Kary+"(+"+str(lap[0].fee)+"s)"
+                result = lap[0].result
+            else:
+                result = '<i class="fa fa-minus-square" aria-hidden="true"></i>'
+                Kary = ""
 
-        results.append("{} {}".format(msToHumanTime(result), Kary))
+            results.append("{} {}".format(msToHumanTime(result), Kary))
 
-    #if no lap at track insert "-" value
-    for track_no in range(len(tracks)):
-        try:
-            type(results[track_no])
-        except:
-            results.append('-')
+        #if no lap at track insert "-" value
+        for track_no in range(len(tracks)):
+            try:
+                type(results[track_no])
+            except:
+                results.append('-')
 
 
-    return results
+        return results
 
 
 @register.simple_tag

@@ -14,13 +14,11 @@
                 <a class="nav-link" id="general-tab" data-toggle="pill" href="#general-pills" role="tab"
                    aria-controls="general-pills" aria-selected="true">Klasyfikacja generalna</a>
             </li>
-            {% for el in classes_laps%}
-            {% for klasa in el %}
+            {% for klasa_name,value in classes_laps.items %}
             <li class="nav-item">
-                <a class="nav-link" id="{{klasa|slugify}}-tab" data-toggle="pill" href="#{{klasa|slugify}}-pills"
-                   role="tab" aria-controls="{{klasa|slugify}}-pills" aria-selected="false">{{klasa}}</a>
+                <a class="nav-link" id="{{klasa_name|slugify}}-tab" data-toggle="pill" href="#{{klasa_name|slugify}}-pills"
+                   role="tab" aria-controls="{{klasa_name|slugify}}-pills" aria-selected="false">{{klasa_name}}</a>
             </li>
-            {% endfor %}
             {% endfor %}
         </ul>
     </div>
@@ -61,43 +59,35 @@
                 <!-- END klasyfikacja_generalna table -->
 
                 <!-- START klasy table -->
-                {% for el in classes_laps %}
-                {% for klas_name, data in el.items %}
-                <div class="tab-pane fade" id="{{klas_name|slugify}}-pills" role="tabpanel" aria-labelledby="{{klas_name|slugify}}-tab">
+               {% for klasa_name,data in classes_laps.items %}
+                <div class="tab-pane fade" id="{{klasa_name|slugify}}-pills" role="tabpanel" aria-labelledby="{{klasa_name|slugify}}-tab">
                     <table class="table table-striped table-advance table-hover">
                         <tbody>
                         <tr>
                             <th>Pozycja</th>
-                            <th alt="Numer startowy">Nr</th>
+                            <th alt="Numer startowy"> Nr</th>
                             <th><i class="icon_profile"></i>Załoga</th>
                             {% for race_lap in race_laps%}
                             <th>{{race_lap.name}}</th>
-                            {% endfor %}
-                            <th></i> Najlepszy Wynik</th>
+                            {% endfor%}
+                            <th></i> Suma</th>
                         </tr>
-                        {% for el2 in data %}
+                        {% for lap2 in data %}
                         <tr>
                             <td>{{forloop.counter}}</td>
-                            {% for label, value in el2.items %}
-                            {% if label == "START_NO" %}
-                            <td><span class="badge badge-warning">{{value}}</span></td>
-                            {% elif label == "TEAM_ID" %}
-                            <td>{{value|GetTeamName}}</td>
-                            {% for element in value|GetTeamLaps%}
-                            <td>
+                            <td ><span class="badge badge-warning">{{lap2.0|GetTeamStartNo}}</span></td>
+                            <td >{{lap2.0|GetTeamName}}</td>
+                            {% for element in lap2.0|GetTeamLaps%}
+                            <td >
                                 {{element}}
                             </td>
                             {% endfor %}
-                            {% elif label == "MIN_RESULT" %}
-                            <td class="text-info">{{value|msToHumanTime}}</td>
-                            {% endif %}
-                            {% endfor %}
+                            <td class="text-info" >{{lap2.1|msToHumanTime}}</td>
                         </tr>
                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                {% endfor %}
                 {% endfor %}
                 <!-- END klasy table -->
             </div>

@@ -34,8 +34,8 @@
       <file leaf-file-name="spc_extratags.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/templatetags/spc_extratags.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="39" column="17" lean-forward="false" selection-start-line="39" selection-start-column="17" selection-end-line="39" selection-end-column="17" />
+            <state relative-caret-position="306">
+              <caret line="69" column="0" lean-forward="true" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
               </folding>
@@ -66,8 +66,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="165" column="96" lean-forward="false" selection-start-line="165" selection-start-column="96" selection-end-line="165" selection-end-column="96" />
+            <state relative-caret-position="144">
+              <caret line="177" column="63" lean-forward="false" selection-start-line="177" selection-start-column="63" selection-end-line="177" selection-end-column="63" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -78,8 +78,8 @@
       <file leaf-file-name="results_sum.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/templates/results_sum.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="348">
-              <caret line="54" column="0" lean-forward="true" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+            <state relative-caret-position="314">
+              <caret line="77" column="103" lean-forward="false" selection-start-line="77" selection-start-column="103" selection-end-line="77" selection-end-column="103" />
               <folding />
             </state>
           </provider>
@@ -98,8 +98,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="940">
-              <caret line="133" column="46" lean-forward="false" selection-start-line="133" selection-start-column="46" selection-end-line="133" selection-end-column="46" />
+            <state relative-caret-position="226">
+              <caret line="91" column="10" lean-forward="false" selection-start-line="91" selection-start-column="4" selection-end-line="91" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -127,13 +127,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Lap</find>
-      <find>chosen_track_id</find>
-      <find>track_id</find>
-      <find>lap_tmp</find>
-      <find>loop</find>
-      <find>blank</find>
-      <find>driver</find>
       <find>tracs</find>
       <find>order</find>
       <find>time_met</find>
@@ -157,6 +150,13 @@
       <find>settings</find>
       <find>race_laps</find>
       <find>forloop</find>
+      <find>classes_laps</find>
+      <find>team_laps</find>
+      <find>classes_team_laps</find>
+      <find>tmp_list_2</find>
+      <find>klasa_tmp_list</find>
+      <find>gen_team_laps</find>
+      <find>klasa</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -636,22 +636,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/templates/time_meter.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="31" column="51" lean-forward="false" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SPC/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1921">
@@ -678,19 +662,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="940">
-          <caret line="133" column="46" lean-forward="false" selection-start-line="133" selection-start-column="46" selection-end-line="133" selection-end-column="46" />
+        <state relative-caret-position="226">
+          <caret line="91" column="10" lean-forward="false" selection-start-line="91" selection-start-column="4" selection-end-line="91" selection-end-column="10" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/templatetags/spc_extratags.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="39" column="17" lean-forward="false" selection-start-line="39" selection-start-column="17" selection-end-line="39" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#27#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -702,18 +676,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/web/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="31" column="51" lean-forward="false" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/templates/time_meter.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/templatetags/spc_extratags.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="69" column="0" lean-forward="true" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/templates/results_sum.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="54" column="0" lean-forward="true" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+        <state relative-caret-position="314">
+          <caret line="77" column="103" lean-forward="false" selection-start-line="77" selection-start-column="103" selection-end-line="77" selection-end-column="103" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="165" column="96" lean-forward="false" selection-start-line="165" selection-start-column="96" selection-end-line="165" selection-end-column="96" />
+        <state relative-caret-position="144">
+          <caret line="177" column="63" lean-forward="false" selection-start-line="177" selection-start-column="63" selection-end-line="177" selection-end-column="63" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>
