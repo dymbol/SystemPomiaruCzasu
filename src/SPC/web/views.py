@@ -7,6 +7,8 @@ from django.http import HttpResponseRedirect
 from .forms import EditRace
 from django.http import JsonResponse
 from django.db import connections
+from django.db.models.query import QuerySet
+from operator import itemgetter
 
 # TODO admin panel: filter teams by race, filter tracks by race etc
 
@@ -80,7 +82,7 @@ def results(request):
 
     if thisrace.race_type == "TimeAttack":
         try:
-            max_result = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('-result')[0]   # worst result
+            max_result = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('result')[0]   # best result
         except:
             return redirect('index')
 
@@ -141,38 +143,41 @@ def results(request):
         context["teams"] = teams
         context["general_laps"] = dictfetchall(cursor)
         context["race_laps"] = Track.objects.filter(race__id=request.session['chosen_race_id'])
-        return render(request, 'results.html', context)
+        return render(request, 'results_time_attack.html', context)
+
     elif thisrace.race_type == "ShorthestSum":
-        print("fde")
+        #get teams on that race
+        this_race_teams = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by().values('team_id').distinct()
+        this_race_laps = Lap.objects.filter(track__race__id=request.session['chosen_race_id'])
+        team_laps = []
+        for team in this_race_teams:
+            tmp_list = []
+            tmp_list.append(team)
+            final_sum = 0
+            for lap in this_race_laps:
+                if team["team_id"] == lap.team.id:
+                    #print(lap)
+                    tmp_list.append(lap)
+                    final_sum = final_sum+lap.final_result
 
-        '''
-        SET @race_id = 1;
-SET @klasa_id = 2;
+            tmp_list.append(final_sum)
+            team_laps.append(tmp_list)
 
-SELECT  team.START_NO,
-		team.id as TEAM_ID,
-        SUM(RESULT+(l.fee*1000)) AS SUMA,
-        IF (l.taryfa=0,RESULT=l.result, RESULT=1.5*(
-												SELECT  MIN(l.result+(l.fee*1000)) AS MIN_RESULT_PROBA
-													from web_lap l
-													JOIN web_track track ON l.track_id=track.id
-													JOIN web_team team ON l.team_id=team.id
-													JOIN web_person person ON team.driver_id=person.id
-													WHERE track.race_id=@race_id
-													AND  team.tclass_id=@klasa_id
-													AND l.taryfa=0 
-													AND track.id=track.id
-												))
-        
-        from web_lap l
-        JOIN web_track track ON l.track_id=track.id
-        JOIN web_team team ON l.team_id=team.id
-        JOIN web_person person ON team.driver_id=person.id
-        WHERE track.race_id=@race_id
-        AND  team.tclass_id=@klasa_id
-        GROUP BY l.team_id
-        ORDER BY  SUMA
-        '''
+        context["general_laps"]=sorted(team_laps, key=itemgetter(-1))       #sorting list by key
+
+        context["race_laps"] = Track.objects.filter(race__id=request.session['chosen_race_id'])
+        print(team_laps[1])
+
+        #
+        #query.group_by = ["team"]
+        #general_results = QuerySet(query=query, model=Lap)
+
+        #for lap in general_results:
+#            print(lap)
+
+        return render(request, 'results_sum.html', context)
+
+
 
 
 @login_required

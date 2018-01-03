@@ -33,6 +33,15 @@ def GetTeamName(value):
             nav_nick)
     return team_name
 
+
+@register.filter
+def GetTeamStartNo(value):
+    team = Team.objects.filter(id=value)
+    return team[0].start_no
+
+
+
+
 @register.filter
 def msToHumanTime(value):
     """Changes millisecond to format M:S:m"""

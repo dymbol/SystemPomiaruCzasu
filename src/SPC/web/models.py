@@ -121,8 +121,24 @@ class Lap(models.Model):
     start_time = models.TimeField(blank=True, null=True)
     stop_time = models.TimeField(blank=True, null=True)
     result = models.BigIntegerField()  #result in milliseconds
-    result_plus_fee = models.BigIntegerField()
-    result_taryfa = models.BigIntegerField()
+
+    @property
+    def result_plus_fee(self):
+        return self.result+(self.fee*1000)
+
+    @property
+    def result_taryfa(self):
+        if self.taryfa is True:
+            #150% best time in the same track and class
+            best_result = Lap.objects.filter(track=self.track, taryfa=False, team__tclass=self.team.tclass).order_by('result')[0]  # best result
+            return int(best_result.result*1.5)
+
+    @property
+    def final_result(self):
+        if self.taryfa is True:
+            return self.result_taryfa
+        else:
+            return self.result_plus_fee
 
     def __str__(self):
         return "{}, {}".format(self.track, self.team)
