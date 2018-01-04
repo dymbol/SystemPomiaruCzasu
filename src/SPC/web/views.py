@@ -232,7 +232,6 @@ def register_result(request):
 
 @login_required
 def change_track(request, race_id):
-    print(request.META.get('HTTP_REFERER'))
     context = {}
 
     if request.method == 'POST':
@@ -250,7 +249,6 @@ def change_track(request, race_id):
             race_id=race_id,
             initial=initial
         )
-        print(form['track'])
 
     # request.session['current_track'] =
     return render(request, 'change_track.html', {'form': form, "race_id": race_id})

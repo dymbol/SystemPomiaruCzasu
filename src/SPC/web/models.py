@@ -9,8 +9,10 @@ class Person(models.Model):
     race_licence = models.BooleanField()
 
     def __str__(self):
-        return "{} {} ({})".format(self.name, self.surname, self.nick)
+        return "{} {} ({})".format(self.surname, self.name, self.nick)
 
+    class Meta:
+        ordering = ['surname', 'name']
 
 class Race(models.Model):
     name = models.CharField(max_length=256)
@@ -32,6 +34,8 @@ class Race(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['name']
 
 class CarClass(models.Model):
     name = models.CharField(max_length=24)
@@ -82,6 +86,9 @@ class Car(models.Model):
     def __str__(self):
         return "{} {} {}".format(self.manufacurer, self.model, round(self.engine_capacity/1000, 1))
 
+    class Meta:
+        ordering = ['manufacurer', 'model', 'engine_capacity']
+
 
 class Team(models.Model):
     start_no = models.DecimalField(decimal_places=0, max_digits=9)
@@ -102,15 +109,20 @@ class Team(models.Model):
             self.driver.surname,
             navigator
             )
-        return "{}: {}".format(self.start_no, team_name)
+        return "[{}] {} ({})".format(self.start_no, team_name, self.race)
 
+    class Meta:
+        ordering = ['race', 'start_no']
 
 class Track(models.Model):
     race = models.ForeignKey(Race, on_delete=models.CASCADE)
     name = models.CharField(max_length=24)
 
     def __str__(self):
-        return self.name
+        return "{} [{}]".format(self.name, self.race)
+
+    class Meta:
+        ordering = ['race', 'name']
 
 
 class Lap(models.Model):
@@ -158,5 +170,8 @@ class Lap(models.Model):
 
     def __str__(self):
         return "{}, {}".format(self.track, self.team)
+
+    class Meta:
+        ordering = ['track__race', 'track', 'team']
 
 
