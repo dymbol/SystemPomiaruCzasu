@@ -127,16 +127,32 @@ class Lap(models.Model):
         return self.result+(self.fee*1000)
 
     @property
-    def result_taryfa(self):
+    def result_taryfa_klasa(self):
         if self.taryfa is True:
             #150% best time in the same track and class
             best_result = Lap.objects.filter(track=self.track, taryfa=False, team__tclass=self.team.tclass).order_by('result')[0]  # best result
             return int(best_result.result*1.5)
 
     @property
-    def final_result(self):
+    def result_taryfa_gen(self):
         if self.taryfa is True:
-            return self.result_taryfa
+            # 150% best time in the same track. class doesn't matter
+            best_result = \
+            Lap.objects.filter(track=self.track, taryfa=False).order_by('result')[
+                0]  # best result
+            return int(best_result.result * 1.5)
+
+    @property
+    def final_result_klasa(self):   # diffrent alg in taryfa time computing in "klasyfikacja generalna" and "klasyfikacja klasowa"
+        if self.taryfa is True:
+            return self.result_taryfa_klasa
+        else:
+            return self.result_plus_fee
+
+    @property
+    def final_result_gen(self): # diffrent alg in taryfa time computing in "klasyfikacja generalna" and "klasyfikacja klasowa"
+        if self.taryfa is True:
+            return self.result_taryfa_gen
         else:
             return self.result_plus_fee
 

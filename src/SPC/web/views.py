@@ -79,7 +79,7 @@ def results(request):
     # - najniższy wynik wygrywa
 
     thisrace=Race.objects.filter(id=request.session['chosen_race_id'])[0]
-
+    # TODO TimeAttack Algorythm: change it like ShorthestSum
     if thisrace.race_type == "TimeAttack":
         try:
             max_result = Lap.objects.filter(track__race__id=request.session['chosen_race_id']).order_by('result')[0]   # best result
@@ -165,7 +165,7 @@ def results(request):
             final_sum = 0
             for lap in this_race_laps:
                 if team_id == lap.team.id:
-                    final_sum = final_sum+lap.final_result      # final_result is computed value from Lap model
+                    final_sum = final_sum+lap.final_result_gen     # final_result is computed value from Lap model
 
             tmp_list.append(final_sum)
             gen_team_laps.append(tmp_list)
@@ -188,7 +188,7 @@ def results(request):
                     this_team_laps.append(team_id)  # FIRST add TEAM
 
                     for lap in Lap.objects.filter(team=team_obj):   # SECOND compute SUM of times
-                        final_sum = final_sum + lap.final_result
+                        final_sum = final_sum + lap.final_result_klasa
 
                     this_team_laps.append(final_sum)    # THIRD add SUM of times
                     klasa_tmp_list.append(this_team_laps)   # FOURTH ADD whole all this team laps to ceratin class
