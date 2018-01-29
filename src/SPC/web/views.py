@@ -1,13 +1,9 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from web.models import *
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
 from .forms import EditRace
 from django.http import JsonResponse
-from django.db import connections
-from django.db.models.query import QuerySet
 from web import result_functions
 
 
