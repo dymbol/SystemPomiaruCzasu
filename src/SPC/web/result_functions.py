@@ -5,6 +5,19 @@ from operator import itemgetter
 from tinydb import  where
 
 
+
+'''
+Reason: Result page was most often used page and was slow because result had to be calulated every get command. 
+
+
+function to calculate save and get  result in memory database - TinyDB
+Algorythm:
+- every time there is new lap saved, the result is regenerated and saved in memory db
+- every time client get results page, results are taken from memory databse.
+- if there are no result in memory databse, result are calculated and saved to memory database and then servewrd to client. 
+ 
+'''
+
 def dictfetchall(cursor):
     "Return all rows from a cursor as a dict"
     columns = [col[0] for col in cursor.description]

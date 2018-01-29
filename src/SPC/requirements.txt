@@ -3,4 +3,5 @@ setuptools
 uwsgi
 mysqlclient
 django-bootstrap-form
+tinydb==3.7.0
 

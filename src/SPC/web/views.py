@@ -57,9 +57,8 @@ def team_list(request):
     return render(request, 'teams.html', context)
 
 
-
-
 def results(request):
+    '''get result data from memory database'''
     if "chosen_race_id" not in request.session.keys():
         return redirect('race_list')
         # TODO add messaege: Wybierz wyścig z listy poniżej
@@ -78,7 +77,6 @@ def results(request):
             return render(request, 'results_sum.html', res['result'][0]['context'])
         else:
             return redirect('index')
-
 
 
 @login_required
@@ -142,6 +140,7 @@ def time_meter(request, team_id):
 
 @login_required
 def save_result(request, team_id, track_id, _result, _fee, _taryfa):
+    '''result are saved in memory database'''
     error_msgs = []
     # checks
     if not Team.objects.filter(id=team_id).exists():
