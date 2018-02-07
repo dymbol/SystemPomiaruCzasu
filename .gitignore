@@ -2,3 +2,4 @@ src/SPC/SPC/settings.py
 src/SPC/db.sqlite3
 *.pyc
 src/.idea/*
+src/SPC/.idea/*
