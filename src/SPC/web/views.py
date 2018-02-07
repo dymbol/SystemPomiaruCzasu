@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from web.models import *
+from web import result_functions
 from django.shortcuts import redirect
 from django.shortcuts import render
 from .forms import EditRace
