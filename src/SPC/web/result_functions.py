@@ -164,7 +164,7 @@ def update(race_id):
 
         context["general_laps"] = sorted(gen_team_laps, key=itemgetter(1))       #laps for GENERAL CLASIFICATION
         context["classes_laps"] = classes_team_laps                            #laps for KLASSES  CLASIFICATION divided on classes (dict)
-        context["race_tracks"] = Track.objects.filter(race__id=race_id)   #list of tracks in this race
+        context["race_tracks"] = Track.objects.filter(race__id=race_id).order_by('name')   #list of tracks in this race
 
     #ZAPIS do TinyDB
     if tinydb_con.tiny_db.contains(where('race_id') == race_id):
