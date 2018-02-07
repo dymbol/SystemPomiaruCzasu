@@ -1,8 +1,8 @@
 from django.db import connections
-from web.models import Race, Lap, Team, Track
 from web import tinydb_con
+from web.models import Race, Lap, Team, Track
 from operator import itemgetter
-from tinydb import  where
+from tinydb import where
 
 
 

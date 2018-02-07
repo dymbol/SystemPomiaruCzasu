@@ -1,4 +1,10 @@
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from django.db import models
+
+
 class Person(models.Model):
     name = models.CharField(max_length=24)
     surname = models.CharField(max_length=24)

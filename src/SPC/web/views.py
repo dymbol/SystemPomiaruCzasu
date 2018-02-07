@@ -4,7 +4,6 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from .forms import EditRace
 from django.http import JsonResponse
-from web import result_functions
 
 
 
@@ -101,7 +100,6 @@ def register_result(request):
             "last_lap": "Trasa: {}".format(lap_tmp_track)
         })
     context["last_laps"] = last_laps
-    result_functions.update(request.session['chosen_race_id'])
     return render(request, 'register_result.html', context)
 
 
