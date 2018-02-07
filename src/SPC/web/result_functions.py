@@ -160,7 +160,7 @@ def update(race_id):
                     this_team_laps.append(final_sum)    # THIRD add SUM of times
                     klasa_tmp_list.append(this_team_laps)   # FOURTH ADD whole all this team laps to ceratin class
 
-            classes_team_laps[klasa_name]=sorted(klasa_tmp_list, key=itemgetter(1)) # add sorted laps for certain klasa
+            classes_team_laps[klasa_name] = sorted(klasa_tmp_list, key=itemgetter(1)) # add sorted laps for certain klasa
 
         context["general_laps"] = sorted(gen_team_laps, key=itemgetter(1))       #laps for GENERAL CLASIFICATION
         context["classes_laps"] = classes_team_laps                            #laps for KLASSES  CLASIFICATION divided on classes (dict)
@@ -173,7 +173,6 @@ def update(race_id):
         tinydb_con.tiny_db.update({'race_id': race_id, 'context': context}, where('race_id') == race_id)
     else:
         tinydb_con.tiny_db.insert({'race_id': race_id, 'context': context})
-
 
 
 def get(race_id):

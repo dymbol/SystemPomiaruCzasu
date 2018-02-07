@@ -72,11 +72,15 @@ def GetTeamLaps(value):
             lap = Lap.objects.filter(track__id=track.id, team=value)
             if lap.exists():
                 Kary = ""
-                if lap[0].taryfa is True:
-                    Kary = Kary + "(T)"
+                if lap[0].taryfa is True:   # if taryfa show letter T
+                    Kary = Kary + " (T)"
                 if lap[0].fee > 0:
                     Kary = Kary+"(+"+str(lap[0].fee)+"s)"
-                result = lap[0].result
+
+                if lap[0].taryfa is True:   #if "taryfa" show the taryfa time. If not show real time
+                    result = lap[0].result_taryfa_klasa
+                else:
+                    result = lap[0].result
             else:
                 result = '<i class="fa fa-minus-square" aria-hidden="true"></i>'
                 Kary = ""
