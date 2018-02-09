@@ -5,10 +5,14 @@ After=network.target
 [Service]
 LimitMEMLOCK=infinity
 LimitNOFILE=65535
-ExecStart=/usr/local/bin/uwsgi /home/spc/SPC_conf/spc.bdempc.pl/spc_uwsgi.ini
+ExecStart=/usr/local/bin/uwsgi --ini /home/spc/SPC_conf/spc.bdempc.pl/spc_uwsgi.ini
 WorkingDirectory=/home/spc
-Type=simple
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
 User=spc
+StandardError=syslog
+NotifyAccess=all
 
 [Install]
 WantedBy=multi-user.target
