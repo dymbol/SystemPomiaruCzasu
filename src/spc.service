@@ -1,10 +1,8 @@
 [Unit]
 Description=System Pomiaru Czasu
-After=network.target
+After=syslog.target
 
 [Service]
-LimitMEMLOCK=infinity
-LimitNOFILE=65535
 ExecStart=/usr/local/bin/uwsgi --ini /home/spc/SPC_conf/spc.bdempc.pl/spc_uwsgi.ini
 WorkingDirectory=/home/spc
 Restart=always
@@ -16,3 +14,4 @@ NotifyAccess=all
 
 [Install]
 WantedBy=multi-user.target
+
