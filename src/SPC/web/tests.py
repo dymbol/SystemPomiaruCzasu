@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class TestSites(TestCase):
     '''Testing if subsites works'''
     def setUp(self):
-        user = User.objects.create_user('temporary', 'tmp@tmp.pl', 'temporary')
+        user = User.objects.create_user('temporary', 'tmp@tmp.pl', 'temp')
     def test_secure_page(self):
         print("======= BASIC SITE TESTING MODULE =======")
         self.client.login(username="temporary", password="temporary")
