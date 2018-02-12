@@ -43,10 +43,11 @@ class Race(models.Model):
     class Meta:
         ordering = ['name']
 
+
 class CarClass(models.Model):
     name = models.CharField(max_length=24)
     type_choices = (
-        ('Capacity','Capacity'),
+        ('Capacity', 'Capacity'),
         ('AWD', 'AWD'),
         ('Guest', 'Guest')
     )
@@ -73,9 +74,9 @@ class Car(models.Model):
     )
     fuel = models.CharField(choices=fuel_choices, max_length=24)
     accel_type_choices = (
-        ("Turbocharged","Turbocharged"),
-        ("Supercharged","Supercharged"),
-        ("Electrical","Electrical")
+        ("Turbocharged", "Turbocharged"),
+        ("Supercharged", "Supercharged"),
+        ("Electrical", "Electrical")
     )
     accel_type = models.CharField(
         choices=accel_type_choices,
