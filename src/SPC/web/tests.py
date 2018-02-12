@@ -51,5 +51,4 @@ class TestSites(TestCase):
         for site in sites:
             print("Testing '{}' site".format(site))
             response = self.client.get(site, follow=True)
-            print(response)
             self.assertEqual(response.status_code, 200)

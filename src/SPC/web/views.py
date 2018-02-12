@@ -80,7 +80,7 @@ def register_result(request):
     if "chosen_race_id" not in request.session.keys():
         return redirect('index')
     if "current_track_id" not in request.session.keys():
-        return redirect('race',request.session['chosen_race_id'])
+        return redirect('race', request.session['chosen_race_id'])
     context = {}
     Teams = Team.objects.filter(race__id=request.session['chosen_race_id'])
     last_laps = []
