@@ -1,4 +1,0 @@
-setuptools
-ez_setup
-Django==2.0
-uwsgi
