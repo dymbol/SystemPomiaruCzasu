@@ -62,14 +62,14 @@ def results(request):
     thisrace = Race.objects.filter(id=request.session['chosen_race_id'])[0]
     if thisrace.race_type == "TimeAttack":
         res = result_functions.get(request.session['chosen_race_id'])
-        if res["result"] is not 1:
+        if res["result"] != 1:
             return render(request, 'results_time_attack.html', res['result'][0]['context'])
         else:
             return redirect('index')
     elif thisrace.race_type == "ShorthestSum":
         res = result_functions.get(request.session['chosen_race_id'])
         #print(res)
-        if res["result"] is not 1:
+        if res["result"] != 1:
             return render(request, 'results_sum.html', res['result'][0]['context'])
         else:
             return redirect('index')
